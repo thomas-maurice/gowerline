@@ -26,6 +26,10 @@ type Plugin struct {
 	Name string
 }
 
+// PluginConfig will be passed down to plugins
+type PluginConfig struct {
+}
+
 func NewPlugin(ctx context.Context, log *zap.Logger, filePath string) (*Plugin, error) {
 	p, err := plugin.Open(filePath)
 	if err != nil {
@@ -37,22 +41,22 @@ func NewPlugin(ctx context.Context, log *zap.Logger, filePath string) (*Plugin, 
 		return nil, err
 	}
 
-	init := sym.(func(context.Context, *zap.Logger) (*Plugin, error))
+	init := sym.(func(context.Context, *zap.Logger, *PluginConfig) (*Plugin, error))
 
-	return init(context.Background(), log.With(zap.String("plugin", filePath)))
+	return init(context.Background(), log.With(zap.String("plugin_path", filePath)), &PluginConfig{})
 }
 
 func (p *Plugin) RunStart(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error) {
-	return p.Start(ctx, log.With(zap.String("plugin", p.Name)))
+	return p.Start(ctx, log.With(zap.String("plugin_name", p.Name)))
 }
 
 func (p *Plugin) RunStop(ctx context.Context, log *zap.Logger) error {
 	if p.Stop != nil {
-		return p.Stop(ctx, log.With(zap.String("plugin", p.Name)))
+		return p.Stop(ctx, log.With(zap.String("plugin_name", p.Name)))
 	}
 	return nil
 }
 
 func (p *Plugin) RunCall(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*types.PowerlineReturn, error) {
-	return p.Call(ctx, log.With(zap.String("plugin", p.Name)), payload)
+	return p.Call(ctx, log.With(zap.String("plugin_name", p.Name)), payload)
 }

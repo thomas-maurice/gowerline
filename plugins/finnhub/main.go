@@ -161,7 +161,7 @@ func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*type
 }
 
 // Init builds and returns the plugin itself
-func Init(ctx context.Context, log *zap.Logger) (*plugins.Plugin, error) {
+func Init(ctx context.Context, log *zap.Logger, pluginConfig *plugins.PluginConfig) (*plugins.Plugin, error) {
 	log.Info(
 		"loaded plugin",
 	)
