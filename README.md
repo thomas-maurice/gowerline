@@ -2,7 +2,7 @@
 
 Because Python is hard and I've always wanted to write my segments in Go.
 
-![Example](https://github.com/thomas-maurice/gowerline/blob/master/_assets/screenshot.png)
+![Example](https://github.com/thomas-maurice/gowerline/blob/master/_assets/demo.gif)
 
 ## What is this ?
 This is a deamon that generates and returns Powerline segments as [described in the docs](https://powerline.readthedocs.io/en/master/develop/segments.html).
