@@ -122,10 +122,6 @@ func Stop(ctx context.Context, log *zap.Logger) error {
 // Returns the actual segment iself. If your plugin handles different functions you should
 // check what is called using the payload.Function attribute
 func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*types.PowerlineReturn, error) {
-	log.Info(
-		"called plugin",
-	)
-
 	var args pluginArgs
 	err := json.Unmarshal(*payload.Args, &args)
 	if err != nil {
