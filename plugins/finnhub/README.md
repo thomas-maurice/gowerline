@@ -11,9 +11,10 @@ Then you can add the config like
 ```json
 {
     "function": "gowerline.gowerline.gwl",
-    "priority": 10,
+    "priority": 60,
     "args": {
-        "function": "time"
+        "function": "ticker",
+        "ticker": "CFLT"
     }
 }
 ```

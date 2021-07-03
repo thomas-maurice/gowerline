@@ -2,11 +2,20 @@ package types
 
 import "encoding/json"
 
+type VimInfo struct {
+	WindowNumber int64  `json:"winnr"`
+	BufferNumber int64  `json:"bufnr"`
+	TabNumber    int64  `json:"tabnr"`
+	Mode         string `json:"mode"`
+}
+
 // Payload is the data that will be passed down to the plugin
 type Payload struct {
 	Function string            `json:"function"`
 	Args     *json.RawMessage  `json:"args"`
 	Env      map[string]string `json:"env"`
+	Cwd      string            `json:"cwd"`
+	Vim      *VimInfo          `json:"vim"`
 }
 
 // This represents the object powerline will read as

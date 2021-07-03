@@ -47,10 +47,18 @@ class Gowerline(Segment):
                     # sanitise the env before passing it in
                     del(segment_info['environ'], k)
 
+            vim = {}
+            for k in ["winnr", "bufnr", "tabnr", "mode"]:
+                if k in segment_info:
+                    vim[k] = segment_info[k]
+
             payload = {
                 "env": segment_info['environ'] if 'environ' in segment_info else None,
                 "args": kwargs,
                 "function": kwargs["function"],
+                "cwd": segment_info["getcwd"](),
+                "home": segment_info["home"] if segment_info["home"] is not False else "",
+                "vim": vim,
             }
 
             # TODO: it should be a list
