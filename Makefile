@@ -23,6 +23,12 @@ run: server plugins
 	pip3 install --editable $(shell pwd)
 	~/.gowerline/gowerline-server
 
+.PHONY: install-plugins
+install-plugins: plugins
+	if ! [ -d ~/.gowerline ]; then mkdir ~/.gowerline; fi;
+	if ! [ -d ~/.gowerline/plugins ]; then mkdir ~/.gowerline/plugins; fi;
+	cp -v bin/plugins/* ~/.gowerline/plugins
+
 .PHONY: install
 install: bin server plugins
 	if ! [ -d ~/.gowerline ]; then mkdir ~/.gowerline; fi;

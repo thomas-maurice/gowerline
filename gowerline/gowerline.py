@@ -67,8 +67,8 @@ class Gowerline(Segment):
             )
 
             return [{
-                "contents": "",
-                "highlight_groups": ["hostname"],
+                "contents": "error rendering gwl",
+                "highlight_groups": ["critical:failure"],
             }]
 
 
