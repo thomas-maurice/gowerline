@@ -53,7 +53,7 @@ func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*type
 		{
 			Content: fmt.Sprintf("%d", time.Now().Unix()),
 			HighlightGroup: []string{
-				"hostname", // using the hostname HL group because it is likely to be defined in the conf
+				"information:regular",
 			},
 		},
 	}, nil

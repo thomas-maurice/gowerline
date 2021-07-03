@@ -39,20 +39,20 @@ func NewPlugin(ctx context.Context, log *zap.Logger, filePath string) (*Plugin, 
 
 	init := sym.(func(context.Context, *zap.Logger) (*Plugin, error))
 
-	return init(context.Background(), log)
+	return init(context.Background(), log.With(zap.String("plugin", filePath)))
 }
 
 func (p *Plugin) RunStart(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error) {
-	return p.Start(ctx, log)
+	return p.Start(ctx, log.With(zap.String("plugin", p.Name)))
 }
 
 func (p *Plugin) RunStop(ctx context.Context, log *zap.Logger) error {
 	if p.Stop != nil {
-		return p.Stop(ctx, log)
+		return p.Stop(ctx, log.With(zap.String("plugin", p.Name)))
 	}
 	return nil
 }
 
 func (p *Plugin) RunCall(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*types.PowerlineReturn, error) {
-	return p.Call(ctx, log, payload)
+	return p.Call(ctx, log.With(zap.String("plugin", p.Name)), payload)
 }

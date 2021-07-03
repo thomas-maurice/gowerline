@@ -3,6 +3,7 @@ module github.com/thomas-maurice/gowerline
 go 1.15
 
 require (
+	github.com/Finnhub-Stock-API/finnhub-go v1.2.1
 	github.com/gin-contrib/zap v0.0.1
 	github.com/gin-gonic/gin v1.7.2
 	go.uber.org/zap v1.10.0

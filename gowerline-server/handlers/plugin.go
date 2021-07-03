@@ -51,7 +51,10 @@ func BuildPluginHandler(ctx context.Context, log *zap.Logger, pluginMap map[stri
 			return
 		}
 
-		result, err := plg.Call(context.Background(), log, &payload)
+		result, err := plg.Call(
+			context.Background(),
+			log.With(zap.String("plugin", plg.Name), zap.String("function", payload.Function)),
+			&payload)
 		if err != nil {
 			log.Error(
 				"could not unmarshal request",
