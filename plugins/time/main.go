@@ -10,12 +10,8 @@ import (
 	"go.uber.org/zap"
 )
 
-func init() {
-
-}
-
 var (
-	pluginName = "time"
+	pluginConfig *plugins.PluginConfig
 )
 
 // Starts the plugin, here you might want to do all the initialisation you need
@@ -24,7 +20,6 @@ var (
 func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error) {
 	log.Info(
 		"started plugin",
-		zap.String("plugin", pluginName),
 	)
 	return &types.PluginStartData{
 		Functions: []string{
@@ -37,7 +32,6 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 func Stop(ctx context.Context, log *zap.Logger) error {
 	log.Info(
 		"stopped plugin",
-		zap.String("plugin", pluginName),
 	)
 	return nil
 }
@@ -47,7 +41,6 @@ func Stop(ctx context.Context, log *zap.Logger) error {
 func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*types.PowerlineReturn, error) {
 	log.Info(
 		"called plugin",
-		zap.String("plugin", pluginName),
 	)
 	return []*types.PowerlineReturn{
 		{
@@ -60,15 +53,17 @@ func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*type
 }
 
 // Init builds and returns the plugin itself
-func Init(ctx context.Context, log *zap.Logger, pluginConfig *plugins.PluginConfig) (*plugins.Plugin, error) {
+func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*plugins.Plugin, error) {
 	log.Info(
 		"loaded plugin",
-		zap.String("plugin", pluginName),
 	)
+
+	pluginConfig = pCfg
+
 	return &plugins.Plugin{
 		Start: Start,
 		Stop:  Stop,
 		Call:  Call,
-		Name:  pluginName,
+		Name:  pluginConfig.PluginName,
 	}, nil
 }

@@ -55,7 +55,11 @@ func main() {
 	pluginList := make([]*plugins.Plugin, 0)
 	for _, plgName := range cfg.Plugins {
 		plgPath := path.Join(homeDir, ".gowerline", "plugins", plgName)
-		plg, err := plugins.NewPlugin(ctx, log, plgPath)
+		plg, err := plugins.NewPlugin(ctx, log, plgPath, &plugins.PluginConfig{
+			UserHome:     homeDir,
+			GowerlineDir: path.Join(homeDir, ".gowerline"),
+			PluginName:   plgName,
+		})
 		if err != nil {
 			log.Panic(fmt.Sprintf("could not load plugin %s", plgName), zap.Error(err))
 		}

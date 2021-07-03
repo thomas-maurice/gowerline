@@ -28,9 +28,12 @@ type Plugin struct {
 
 // PluginConfig will be passed down to plugins
 type PluginConfig struct {
+	UserHome string
+	GowerlineDir string
+	PluginName string
 }
 
-func NewPlugin(ctx context.Context, log *zap.Logger, filePath string) (*Plugin, error) {
+func NewPlugin(ctx context.Context, log *zap.Logger, filePath string, pluginConfig *PluginConfig) (*Plugin, error) {
 	p, err := plugin.Open(filePath)
 	if err != nil {
 		return nil, err
@@ -43,7 +46,7 @@ func NewPlugin(ctx context.Context, log *zap.Logger, filePath string) (*Plugin, 
 
 	init := sym.(func(context.Context, *zap.Logger, *PluginConfig) (*Plugin, error))
 
-	return init(context.Background(), log.With(zap.String("plugin_path", filePath)), &PluginConfig{})
+	return init(context.Background(), log.With(zap.String("plugin_path", filePath)), pluginConfig)
 }
 
 func (p *Plugin) RunStart(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error) {

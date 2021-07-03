@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"path"
 	"time"
 
@@ -22,6 +21,7 @@ var (
 	cachedData     map[string]finnhub.Quote
 	stopChannel    chan bool
 	stoppedChannel chan bool
+	pluginConfig   *plugins.PluginConfig
 )
 
 type Config struct {
@@ -83,12 +83,8 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 	cachedData = make(map[string]finnhub.Quote)
 	stopChannel = make(chan bool)
 	stoppedChannel = make(chan bool)
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		log.Panic("could not load configuration")
-	}
 
-	configBytes, err := ioutil.ReadFile(path.Join(homeDir, ".gowerline", "finnhub.yaml"))
+	configBytes, err := ioutil.ReadFile(path.Join(pluginConfig.GowerlineDir, "finnhub.yaml"))
 	if err != nil {
 		log.Panic("could not load configuration", zap.Error(err))
 	}
@@ -161,10 +157,13 @@ func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*type
 }
 
 // Init builds and returns the plugin itself
-func Init(ctx context.Context, log *zap.Logger, pluginConfig *plugins.PluginConfig) (*plugins.Plugin, error) {
+func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*plugins.Plugin, error) {
 	log.Info(
 		"loaded plugin",
 	)
+
+	pluginConfig = pCfg
+
 	return &plugins.Plugin{
 		Start: Start,
 		Stop:  Stop,

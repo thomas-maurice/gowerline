@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
-	"os"
 	"path"
 	"time"
 
@@ -40,6 +39,11 @@ var (
 		"gwl:vault_expired",
 		"information:regular",
 	}
+	pluginConfig   *plugins.PluginConfig
+	pluginName     = "vault"
+	stopChannel    chan bool
+	stoppedChannel chan bool
+	vaultState     *VaultState
 )
 
 type pluginArgs struct {
@@ -77,13 +81,6 @@ func (vs *VaultState) Render() {
 	vs.RenderedExpiry = vs.ExpiresString()
 }
 
-var (
-	pluginName     = "vault"
-	stopChannel    chan bool
-	stoppedChannel chan bool
-	vaultState     *VaultState
-)
-
 // updateVaultInfos gets the data for caching
 func updateVaultInfos(log *zap.Logger) error {
 	log.Info("updating vault data")
@@ -93,12 +90,7 @@ func updateVaultInfos(log *zap.Logger) error {
 	}
 
 	if client.Token() == "" {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			return err
-		}
-
-		tknBytes, err := ioutil.ReadFile(path.Join(homeDir, ".vault-token"))
+		tknBytes, err := ioutil.ReadFile(path.Join(pluginConfig.UserHome, ".vault-token"))
 		if err != nil {
 			return err
 		}
@@ -166,14 +158,9 @@ func run(log *zap.Logger) {
 	}
 	defer watcher.Close()
 
-	homeDir, err := os.UserHomeDir()
+	err = watcher.Add(path.Join(pluginConfig.UserHome, ".vault-token"))
 	if err != nil {
-		log.Error("cannot determine the user's home directory", zap.Error(err))
-	} else {
-		err = watcher.Add(path.Join(homeDir, ".vault-token"))
-		if err != nil {
-			log.Error("could not watch ~/.vault-token", zap.Error(err))
-		}
+		log.Error("could not watch ~/.vault-token", zap.Error(err))
 	}
 
 	var lastUpdate time.Time
@@ -284,11 +271,14 @@ func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*type
 }
 
 // Init builds and returns the plugin itself
-func Init(ctx context.Context, log *zap.Logger, pluginConfig *plugins.PluginConfig) (*plugins.Plugin, error) {
+func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*plugins.Plugin, error) {
 	log.Info(
 		"loaded plugin",
 		zap.String("plugin", pluginName),
 	)
+
+	pluginConfig = pCfg
+
 	return &plugins.Plugin{
 		Start: Start,
 		Stop:  Stop,
