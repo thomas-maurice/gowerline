@@ -69,6 +69,6 @@ func Init(ctx context.Context, log *zap.Logger) (*plugins.Plugin, error) {
 		Start: Start,
 		Stop:  Stop,
 		Call:  Call,
-		Name:  "time",
+		Name:  pluginName,
 	}, nil
 }
