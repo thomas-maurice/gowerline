@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/vault/api"
 	"github.com/thomas-maurice/gowerline/gowerline-server/plugins"
 	"github.com/thomas-maurice/gowerline/gowerline-server/types"
+	"gopkg.in/fsnotify.v1"
 
 	"go.uber.org/zap"
 )
@@ -33,11 +34,11 @@ type VaultState struct {
 var (
 	defaultHighlightSegments = []string{
 		"gwl:vault",
-		"information:normal",
+		"information:regular",
 	}
 	expiredHighlightSegments = []string{
 		"gwl:vault_expired",
-		"information:normal",
+		"information:regular",
 	}
 )
 
@@ -54,7 +55,7 @@ func (vs *VaultState) Expire() {
 	vs.Accessor = ""
 	vs.CreationTime = 0
 	vs.CreationTTL = 0
-	vs.DisplayName = ""
+	vs.DisplayName = "not logged"
 	vs.EntityID = ""
 	vs.RenderedExpiry = ""
 	vs.ExpiryTime = 0
@@ -159,6 +160,24 @@ func run(log *zap.Logger) {
 
 	tck := time.NewTicker(time.Minute)
 
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Error("could not setup fsnotify watcher", zap.Error(err))
+	}
+	defer watcher.Close()
+
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Error("cannot determine the user's home directory", zap.Error(err))
+	} else {
+		err = watcher.Add(path.Join(homeDir, ".vault-token"))
+		if err != nil {
+			log.Error("could not watch ~/.vault-token", zap.Error(err))
+		}
+	}
+
+	var lastUpdate time.Time
+
 	for {
 		select {
 		case <-tck.C:
@@ -166,6 +185,20 @@ func run(log *zap.Logger) {
 			if err != nil {
 				vaultState.Expire()
 				log.Error("failed to update vault informations", zap.Error(err))
+			}
+		case _, ok := <-watcher.Events:
+			if !ok {
+				break
+			}
+
+			if time.Since(lastUpdate) > time.Second*5 {
+				log.Info("reload triggered by a change of the ~/.vault-token file")
+				err := updateVaultInfos(log)
+				if err != nil {
+					vaultState.Expire()
+					log.Error("failed to update vault informations", zap.Error(err))
+				}
+				lastUpdate = time.Now()
 			}
 		case <-stopChannel:
 			stoppedChannel <- true
