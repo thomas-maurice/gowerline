@@ -1,0 +1,5 @@
+# example server config
+---
+port: 6666
+plugins:
+  - time

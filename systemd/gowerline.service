@@ -1,0 +1,14 @@
+
+[Unit]
+Description=gowerline service
+After=network.target
+StartLimitIntervalSec=5
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+ExecStart=%h/.gowerline/gowerline-server
+
+[Install]
+WantedBy=multi-user.target
