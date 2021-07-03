@@ -52,6 +52,17 @@ This will use the `time` plugin. In your powerline theme, add the following:
 Every plugin exposes one or more `function` that you have to reference in your powerline config. This will effectively
 be passed down to the Go code, as long as every other variable you add in this JSON.
 
+The Gowerline config itself lives in `~/.gowerline/server.yaml`
+```yaml
+---
+port: 6666
+plugins:
+- time
+- finnhub
+- vault
+- colourenv
+```
+
 ## How do I extend it ?
 Go have a look at the [time plugin](https://github.com/thomas-maurice/gowerline/blob/master/plugins/time/main.go). It should
 be easy to understand. You essentially have to implement one function, `Init` that builds and returns a `Plugin` object.
