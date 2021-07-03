@@ -51,9 +51,9 @@ func BuildPluginHandler(ctx context.Context, log *zap.Logger, pluginMap map[stri
 			return
 		}
 
-		result, err := plg.Call(
+		result, err := plg.RunCall(
 			context.Background(),
-			log.With(zap.String("plugin", plg.Name), zap.String("function", payload.Function)),
+			log.With(zap.String("function", payload.Function)),
 			&payload)
 		if err != nil {
 			log.Error(

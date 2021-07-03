@@ -83,7 +83,6 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 	cachedData = make(map[string]finnhub.Quote)
 	stopChannel = make(chan bool)
 	stoppedChannel = make(chan bool)
-
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		log.Panic("could not load configuration")

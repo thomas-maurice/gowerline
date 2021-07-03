@@ -59,7 +59,7 @@ func main() {
 		if err != nil {
 			log.Panic(fmt.Sprintf("could not load plugin %s", plgName), zap.Error(err))
 		}
-		data, err := plg.Start(ctx, log)
+		data, err := plg.RunStart(ctx, log)
 		if err != nil {
 			log.Panic(fmt.Sprintf("could not load plugin %s", plgName), zap.Error(err))
 		}
@@ -97,7 +97,7 @@ func main() {
 	log.Info("caught signal", zap.String("signal, exiting", sig.String()))
 	for _, plg := range pluginList {
 		log.Info("stopping plugin", zap.String("plugin", plg.Name))
-		err := plg.Stop(ctx, log)
+		err := plg.RunStop(ctx, log)
 		if err != nil {
 			log.Error("failed to stop plugin", zap.String("plugin", plg.Name))
 		}
