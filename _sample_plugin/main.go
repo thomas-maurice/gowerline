@@ -43,7 +43,7 @@ func update(log *zap.Logger) error {
 // This is a loop you can populate if your plugin needs to do periodic data updates
 // such as performing network calls or something.
 func run(log *zap.Logger) {
-	err := updateTickers(log)
+	err := update(log)
 	if err != nil {
 		log.Error("failed to run plugin data refresh", zap.Error(err))
 	}
