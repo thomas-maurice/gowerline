@@ -1,0 +1,7 @@
+---
+# example config
+variables:
+  ENV:
+    prod: "information:priority"
+    devel: "information:regular"
+    stag: "warning:regular"
