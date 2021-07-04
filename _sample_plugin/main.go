@@ -33,7 +33,7 @@ type pluginArgs struct {
 	SomeVariable string `json:"someVariable"`
 }
 
-// updatesTickers gets the data for caching
+// update gets the data for caching
 func update(log *zap.Logger) error {
 	log.Info("running the update loop")
 
