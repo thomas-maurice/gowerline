@@ -74,7 +74,9 @@ plugins:
 ```
 
 ## How do I extend it ?
-Go have a look at the [time plugin](https://github.com/thomas-maurice/gowerline/blob/master/plugins/time/main.go). It should
-be easy to understand. You essentially have to implement one function, `Init` that builds and returns a `Plugin` object.
+Go have a look at the [example plugin](https://github.com/thomas-maurice/gowerline/blob/master/_sample_plugin/README.md). It should
+be easy to understand. Feel free to copy it in the `plugins/` directory and fill in the blanks.
+
+The `Makefile` is designed so that if you run `make plugins` your new source will be picked up and compiled to `bin/plugins/<plugin>`
 
 The plugins are complied as Go plugins (essentialy `.so` libraries) that are loaded by the main daemon.
