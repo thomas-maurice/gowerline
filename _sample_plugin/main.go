@@ -141,6 +141,6 @@ func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*pl
 		Start: Start,
 		Stop:  Stop,
 		Call:  Call,
-		Name:  pluginName,
+		Name:  pCfg.PluginName,
 	}, nil
 }
