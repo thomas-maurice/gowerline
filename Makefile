@@ -36,6 +36,7 @@ install: bin server plugins
 	cp -v bin/gowerline-server ~/.gowerline
 	cp -v bin/plugins/* ~/.gowerline/plugins
 	if ! [ -f ~/.gowerline/server.yaml ]; then cp -v server.yaml ~/.gowerline; fi;
+	if ! [ -d ~/.config/systemd/user ]; then mkdir ~/.config/systemd/user; fi
 	cp -v systemd/gowerline.service  ~/.config/systemd/user
 	pip3 install --editable $(shell pwd)
 
