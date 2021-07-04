@@ -17,6 +17,16 @@ to generate data that would be too long to generate if it had to be called every
 for instance do API calls to your favourite stock ticker or for example check the validity of an auth token
 every other minute.
 
+## Available plugins
+
+Every plugin has a `README.md` file at the root of their directory detailing what they do and how they work
+
+| Plugin name | Plugin description |
+|-------|-------|
+| [Finnhub](https://github.com/thomas-maurice/gowerline/blob/master/plugins/finnhub/README.md) | Displays financial infos about a stock ticker (or many!) that you are interested in |
+| [Vault](https://github.com/thomas-maurice/gowerline/blob/master/plugins/vault/README.md) | Gives you information about your current Hashicorp Vault token (display name, validity TTL & co) |
+| [Colourenv](https://github.com/thomas-maurice/gowerline/blob/master/plugins/colourenv/README.md) | Renders environment variables in your terminal with different colourschemes depending on values (useful to not wreck production by mistake)
+
 ## How does it work (on my system) ?
 You have two parts to it:
 * The powerline extension, that bridges between poweline and the Go server
