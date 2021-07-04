@@ -2,4 +2,6 @@
 ---
 port: 6666
 plugins:
-  - time
+- time
+- vault
+- colourenv
