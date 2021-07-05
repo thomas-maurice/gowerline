@@ -25,7 +25,7 @@ if not os.path.isdir(logPath):
 
 
 logging.basicConfig(filename=os.path.join(
-    logPath, "gowerline.log"), level=logging.Info)
+    logPath, "gowerline.log"), level=logging.INFO)
 
 if os.path.isfile(cfgPath):
     with open(cfgPath, "r") as dat:
@@ -64,14 +64,22 @@ class Gowerline(Segment):
             )
 
             respJson = resp.json()
-            if not "highlight_groups" in respJson:
-                respJson["highlight_groups"] = [
-                    "gwl",
-                    "information:regular",
-                ]
-            else:
-                respJson.append("gwl")
-                respJson.append("information:regular")
+
+            if respJson is None:
+                return [{
+                    "contents": "None rendering gwl",
+                    "highlight_groups": ["critical:failure"],
+                }]
+
+            for segment in respJson:
+                if not "highlight_groups" in segment:
+                    segment["highlight_groups"] = [
+                        "gwl",
+                        "information:regular",
+                    ]
+                else:
+                    segment["highlight_groups"].append("gwl")
+                    segment["highlight_groups"].append("information:regular")
 
             return respJson
         except Exception as exce:
