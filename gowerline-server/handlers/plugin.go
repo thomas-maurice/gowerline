@@ -66,6 +66,10 @@ func BuildPluginHandler(ctx context.Context, log *zap.Logger, pluginMap map[stri
 			return
 		}
 
+		if result == nil {
+			result = make([]*types.PowerlineReturn, 0)
+		}
+
 		c.JSON(http.StatusOK, result)
 	}
 }
