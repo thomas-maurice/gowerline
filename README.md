@@ -23,9 +23,10 @@ Every plugin has a `README.md` file at the root of their directory detailing wha
 
 | Plugin name | Plugin description |
 |-------|-------|
+| [Bash](https://github.com/thomas-maurice/gowerline/blob/master/plugins/bash/README.md) | Renders segments that are the result of bash commands ran on a schedule |
 | [Finnhub](https://github.com/thomas-maurice/gowerline/blob/master/plugins/finnhub/README.md) | Displays financial infos about a stock ticker (or many!) that you are interested in |
 | [Vault](https://github.com/thomas-maurice/gowerline/blob/master/plugins/vault/README.md) | Gives you information about your current Hashicorp Vault token (display name, validity TTL & co) |
-| [Colourenv](https://github.com/thomas-maurice/gowerline/blob/master/plugins/colourenv/README.md) | Renders environment variables in your terminal with different colourschemes depending on values (useful to not wreck production by mistake)
+| [Colourenv](https://github.com/thomas-maurice/gowerline/blob/master/plugins/colourenv/README.md) | Renders environment variables in your terminal with different colourschemes depending on values (useful to not wreck production by mistake) |
 
 ## How does it work (on my system) ?
 You have two parts to it:
