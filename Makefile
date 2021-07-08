@@ -5,6 +5,18 @@ bin:
 	if ! [ -d bin ]; then mkdir bin; fi
 	if ! [ -d bin/plugins ]; then mkdir bin/plugins; fi
 
+.PHONY: start
+start:
+	systemctl --user start gowerline
+
+.PHONY: stop
+stop:
+	systemctl --user stop gowerline
+
+.PHONY: restart
+restart:
+	systemctl --user restart gowerline
+
 .PHONY: server
 server: bin
 	go build -o bin/gowerline-server ./gowerline-server
@@ -22,10 +34,11 @@ install-extension:
 	pip3 install --editable $(shell pwd)
 
 .PHONY: install-server
-install-server: bin
+install-server: server stop
 	if ! [ -d ~/.gowerline ]; then mkdir ~/.gowerline; fi;
 	if ! [ -d ~/.gowerline/plugins ]; then mkdir ~/.gowerline/plugins; fi;
 	cp -v bin/gowerline-server ~/.gowerline
+	make start
 
 .PHONY: install-plugins
 install-plugins: plugins
