@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"path"
 
@@ -72,8 +71,6 @@ func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*type
 	if !ok {
 		return nil, nil
 	}
-
-	log.Error(fmt.Sprintf(" %s -> %s", args.Variable, val))
 
 	hlgs := make([]string, 0)
 	varMapping, ok := cfg.Variables[args.Variable]
