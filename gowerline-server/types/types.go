@@ -22,12 +22,12 @@ type Payload struct {
 // the segment data (for one segment)
 // Taken from https://powerline.readthedocs.io/en/master/develop/segments.html
 type PowerlineReturn struct {
-	Content               string   `json:"contents"`
-	HighlightGroup        []string `json:"highlight_groups"`
-	DrawInnerDivider      bool     `json:"draw_inner_divider"`
-	DrawSoftDivider       bool     `json:"draw_soft_divider"`
-	DrawHardDivider       bool     `json:"draw_hard_divider"`
-	DividerHighlightGroup string   `json:"divider_highlight_group"`
+	Content               string   `json:"contents,omitempty"`
+	HighlightGroup        []string `json:"highlight_groups,omitempty"`
+	DrawInnerDivider      bool     `json:"draw_inner_divider,omitempty"`
+	DrawSoftDivider       bool     `json:"draw_soft_divider,omitempty"`
+	DrawHardDivider       bool     `json:"draw_hard_divider,omitempty"`
+	DividerHighlightGroup string   `json:"divider_highlight_group,omitempty"`
 }
 
 // Contains registration data like the functions
