@@ -1,7 +1,9 @@
 ---
-# example config
 variables:
   ENV:
-    prod: "information:priority"
-    devel: "information:regular"
-    stag: "warning:regular"
+    - regex: stag
+      highlightGroup: "information:priority"
+    - regex: devel
+      highlightGroup: "information:regular"
+    - regex: prod
+      highlightGroup: "warning:regular"

@@ -1,16 +1,20 @@
 # Colourenv - Context dependent evironment variable printing
 
-Returns an different colour segment depending on the value of an env variable
+Returns an different colour segment depending on the value of an env variable and a regex
 
 ## How to configure the plugin
 
 Configure it in in `~/.gowerline/colourenv.yaml` like so:
 ```yaml
+---
 variables:
   ENV:
-    prod: "information:priority"
-    devel: "information:regular"
-    stag: "warning:regular"
+    - regex: stag
+      highlightGroup: "information:priority"
+    - regex: devel
+      highlightGroup: "information:regular"
+    - regex: prod
+      highlightGroup: "warning:regular"
 ```
 
 And this will print the value of the variable using the specified highlight groups.

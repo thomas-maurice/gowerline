@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"path"
+	"regexp"
 
 	"github.com/thomas-maurice/gowerline/gowerline-server/plugins"
 	"github.com/thomas-maurice/gowerline/gowerline-server/types"
@@ -18,8 +19,45 @@ var (
 	defaultHLG   = "information:regular"
 )
 
+type ColourConfig struct {
+	Regex          string         `yaml:"regex"`
+	HighlightGroup string         `yaml:"highlightGroup"`
+	CompiledRegex  *regexp.Regexp `yaml:"-"`
+}
+
 type Config struct {
-	Variables map[string]map[string]string `yaml:"variables"`
+	Variables map[string][]ColourConfig `yaml:"variables"`
+}
+
+func (c *Config) Compile(log *zap.Logger) error {
+	for variable, regexes := range c.Variables {
+		for idx, regex := range regexes {
+			compiledRegex, err := regexp.Compile(regex.Regex)
+			if err != nil {
+				log.Error("could not compile regex", zap.String("variable", variable), zap.String("regex", regex.Regex))
+				return err
+			}
+			log.Info("adding regex for variable", zap.String("variable", variable), zap.String("regex", regex.Regex))
+			c.Variables[variable][idx].CompiledRegex = compiledRegex
+		}
+	}
+	return nil
+}
+
+func (c *Config) GetHighlights(log *zap.Logger, variable string, value string) []string {
+	colourConfig, ok := c.Variables[variable]
+	if !ok {
+		return nil
+	}
+
+	for _, cfg := range colourConfig {
+
+		if cfg.CompiledRegex.Match([]byte(value)) {
+			return []string{cfg.HighlightGroup}
+		}
+	}
+
+	return nil
 }
 
 type pluginArgs struct {
@@ -37,8 +75,15 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 		log.Panic("could not load configuration", zap.Error(err))
 	}
 
+	err = cfg.Compile(log)
+	if err != nil {
+		log.Panic("failed to compile regexes", zap.Error(err))
+	}
+
 	for k, v := range cfg.Variables {
-		log.Info("added variable", zap.String("variable", k), zap.Any("highlights_groups", v))
+		for _, cf := range v {
+			log.Info("added variable", zap.String("variable", k), zap.String("regex", cf.Regex), zap.String("highlight_group", cf.HighlightGroup))
+		}
 	}
 
 	return &types.PluginStartData{
@@ -72,17 +117,7 @@ func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*type
 		return nil, nil
 	}
 
-	hlgs := make([]string, 0)
-	varMapping, ok := cfg.Variables[args.Variable]
-	if !ok {
-		return nil, nil
-	}
-
-	hlg, ok := varMapping[val]
-	if ok {
-		hlgs = append(hlgs, hlg)
-	}
-
+	hlgs := cfg.GetHighlights(log, args.Variable, val)
 	hlgs = append(hlgs, defaultHLG)
 
 	return []*types.PowerlineReturn{
