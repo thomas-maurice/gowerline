@@ -1,0 +1,4 @@
+include version.py
+recursive-include gowerline *
+include README.md
+include LICENSE

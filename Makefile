@@ -1,9 +1,19 @@
-all: bin server plugins
+all: bin server plugins archive
+
+.PHONY: upload-pypi
+upload-pypi:
+	if [ -d dist ]; then rm -fr dist; fi
+	python3 -m build -s
+	python3 -m twine upload --repository testpypi dist/*
 
 .PHONY: bin
 bin:
 	if ! [ -d bin ]; then mkdir bin; fi
 	if ! [ -d bin/plugins ]; then mkdir bin/plugins; fi
+
+.PHONY: archive
+archive: plugins
+	cd bin && tar zcvf plugins-$(shell git tag| head -n 1)-$(shell go env GOOS)-$(shell go env GOARCH).tar.gz plugins
 
 .PHONY: start
 start:
@@ -19,7 +29,7 @@ restart:
 
 .PHONY: server
 server: bin
-	go build -o bin/gowerline-server ./gowerline-server
+	go build -o bin/gowerline-server-$(shell git tag| head -n 1)-$(shell go env GOOS)-$(shell go env GOARCH) ./gowerline-server
 
 .PHONY: plugins
 plugins:
@@ -37,7 +47,7 @@ install-extension:
 install-server: server stop
 	if ! [ -d ~/.gowerline ]; then mkdir ~/.gowerline; fi;
 	if ! [ -d ~/.gowerline/plugins ]; then mkdir ~/.gowerline/plugins; fi;
-	cp -v bin/gowerline-server ~/.gowerline
+	cp -v bin/gowerline-server-$(shell git tag| head -n 1)-$(shell go env GOOS)-$(shell go env GOARCH) ~/.gowerline
 	make start
 
 .PHONY: install-plugins
