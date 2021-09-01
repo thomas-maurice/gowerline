@@ -5,7 +5,7 @@
 # This file is placed into the public domain.
 
 # Calculates the current version number.  If possible, this is the
-# output of “git describe”, modified to conform to the versioning
+# output of "git describe", modified to conform to the versioning
 # scheme that setuptools uses.  If “git describe” returns an error
 # (most likely because we're in an unpacked copy of a release tarball,
 # rather than in a git working copy), then we fall back on reading the
@@ -41,14 +41,14 @@ from subprocess import Popen, PIPE
 
 def call_git_describe(abbrev):
     try:
-        p = Popen(['git', 'describe', '--abbrev=%d' % abbrev],
+        p = Popen(['bash', '-c', 'git tag | tail -n1'],
                   stdout=PIPE, stderr=PIPE)
         p.stderr.close()
         line = p.stdout.readlines()[0]
         return bytes(line.strip())
 
     except:
-        return "v0.0.0"
+        return bytes("v0.0.0")
 
 
 def is_dirty():
