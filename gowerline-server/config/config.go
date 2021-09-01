@@ -7,7 +7,10 @@ import (
 )
 
 type Config struct {
-	Port    int64    `yaml:"port"`
+	Listen struct {
+		Port int64  `yaml:"port"`
+		Unix string `yaml:"unix"`
+	} `yaml:"listen"`
 	Plugins []string `yaml:"plugins"`
 }
 

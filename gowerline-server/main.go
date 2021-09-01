@@ -6,7 +6,10 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"os/user"
 	"path"
+	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
@@ -89,10 +92,35 @@ func main() {
 	}
 
 	go func() {
-		err = r.Run(fmt.Sprintf("127.0.0.1:%d", cfg.Port))
+		if cfg.Listen.Unix != "" {
+			var listenPath string
+			currentUser, err := user.Current()
+			if err != nil {
+				log.Panic("could not get current user", zap.Error(err))
+			}
+			homeDir := currentUser.HomeDir
+
+			if strings.HasPrefix(cfg.Listen.Unix, "~/") {
+				listenPath = filepath.Join(homeDir, cfg.Listen.Unix[2:])
+			}
+
+			log.Info("listening on an unix socket", zap.String("socket", listenPath))
+			os.Remove(listenPath)
+			err = r.RunUnix(listenPath)
+			if err != nil {
+				log.Panic("could not listen", zap.Error(err))
+			}
+
+			log.Info("closed unix socket")
+
+			return
+		}
+
+		err = r.Run(fmt.Sprintf("127.0.0.1:%d", cfg.Listen.Port))
 		if err != nil {
 			log.Panic("could not listen", zap.Error(err))
 		}
+		log.Info("closed socket")
 	}()
 
 	signalChan := make(chan os.Signal, 1)

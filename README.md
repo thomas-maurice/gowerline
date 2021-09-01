@@ -66,7 +66,9 @@ be passed down to the Go code, as long as every other variable you add in this J
 The Gowerline config itself lives in `~/.gowerline/server.yaml`
 ```yaml
 ---
-port: 6666
+listen:
+    # port: 6666
+    unix: ~/.gowerline/server.sock
 plugins:
 - time
 - finnhub
