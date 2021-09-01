@@ -1,7 +1,9 @@
 # example server config
 ---
-port: 6666
+listen:
+  # port: 6666
+  unix: ~/.gowerline/server.sock
 plugins:
-- time
-- vault
-- colourenv
+  - time
+  - vault
+  - colourenv

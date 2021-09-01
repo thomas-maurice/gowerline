@@ -8,12 +8,17 @@ from pathlib import Path
 
 import logging
 import requests
+import requests_unixsocket
+import urllib.parse
 import traceback
 import yaml
 import os
+import os.path
 
 defaultConf = {
-    "port": 6666
+    "listen": {
+        "port": 6666,
+    }
 }
 
 logPath = os.path.join(str(Path.home()), ".gowerline")
@@ -23,12 +28,20 @@ cfg = {}
 if not os.path.isdir(logPath):
     os.mkdir(logPath)
 
+serverURL = ""
 
 if os.path.isfile(cfgPath):
     with open(cfgPath, "r") as dat:
         cfg = yaml.load(dat, Loader=yaml.FullLoader)
+        if "listen" in cfg and "unix" in cfg["listen"]:
+            requests_unixsocket.monkeypatch()
+            serverURL = "http+unix://{}".format(
+                urllib.parse.quote_plus(os.path.expanduser(cfg["listen"]["unix"])))
+        else:
+            serverURL = "http://127.0.0.1:{}".format(cfg["port"])
 else:
     cfg = {"port": 6666, "debug": False}
+    serverURL = "http://127.0.0.1:{}".format(cfg["port"])
 
 if "debug" in cfg and cfg["debug"]:
     logging.basicConfig(filename=os.path.join(
@@ -67,7 +80,7 @@ class Gowerline(Segment):
 
             # TODO: it should be a list
             resp = requests.post(
-                "http://127.0.0.1:{}/plugin".format(cfg["port"]),
+                "{}/plugin".format(serverURL),
                 json=payload,
             )
 

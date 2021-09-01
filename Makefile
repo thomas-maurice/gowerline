@@ -29,7 +29,7 @@ restart:
 
 .PHONY: server
 server: bin
-	go build -o bin/gowerline-server-$(shell git tag| head -n 1)-$(shell go env GOOS)-$(shell go env GOARCH) ./gowerline-server
+	CGO_ENABLED=1 go build -o bin/gowerline-server-$(shell git tag| head -n 1)-$(shell go env GOOS)-$(shell go env GOARCH) ./gowerline-server
 
 .PHONY: plugins
 plugins:
@@ -47,7 +47,7 @@ install-extension:
 install-server: server stop
 	if ! [ -d ~/.gowerline ]; then mkdir ~/.gowerline; fi;
 	if ! [ -d ~/.gowerline/plugins ]; then mkdir ~/.gowerline/plugins; fi;
-	cp -v bin/gowerline-server-$(shell git tag| head -n 1)-$(shell go env GOOS)-$(shell go env GOARCH) ~/.gowerline
+	cp -v bin/gowerline-server-$(shell git tag| head -n 1)-$(shell go env GOOS)-$(shell go env GOARCH) ~/.gowerline/gowerline-server
 	make start
 
 .PHONY: install-plugins
@@ -67,7 +67,7 @@ install-plugins: plugins
 install: install-extension install-server install-plugins
 	if ! [ -d ~/.gowerline ]; then mkdir ~/.gowerline; fi;
 	if ! [ -d ~/.gowerline/plugins ]; then mkdir ~/.gowerline/plugins; fi;
-	cp -v bin/gowerline-server ~/.gowerline
+	cp -v bin/gowerline-server-$(shell git tag| head -n 1)-$(shell go env GOOS)-$(shell go env GOARCH) ~/.gowerline/gowerline-server
 	cp -v bin/plugins/* ~/.gowerline/plugins
 	if ! [ -f ~/.gowerline/server.yaml ]; then cp -v server.yaml ~/.gowerline; fi;
 	if ! [ -d ~/.config/systemd/user ]; then mkdir ~/.config/systemd/user; fi
