@@ -57,6 +57,8 @@ func main() {
 		zap.String("build_host", version.BuildHost),
 		zap.String("build_time", version.BuildTime),
 		zap.String("build_hash", version.BuildHash),
+		zap.String("target_os", version.OS),
+		zap.String("target_arch", version.Arch),
 	)
 
 	cfg, err := config.NewConfigFromFile(configFile)

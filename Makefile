@@ -90,9 +90,14 @@ GOFLAGS := -ldflags \
 	-X 'github.com/thomas-maurice/gowerline/gowerline-server/version.BuildHost=$(shell hostname)' \
 	-X 'github.com/thomas-maurice/gowerline/gowerline-server/version.BuildTime=$(shell date)' \
 	-X 'github.com/thomas-maurice/gowerline/gowerline-server/version.BuildHash=$(HASH)' \
+	-X 'github.com/thomas-maurice/gowerline/gowerline-server/version.OS=$(shell go env GOOS)' \
+	-X 'github.com/thomas-maurice/gowerline/gowerline-server/version.Arch=$(shell go env GOARCH)' \
 	"
 
-BINARY_SUFFIX := $(VERSION)-$(shell go env GOOS)-$(shell go env GOARCH)
+BINARY_SUFFIX := $(VERSION)_$(shell go env GOOS)_$(shell go env GOARCH)
+
+clean:
+	rm -rf ./bin
 
 .PHONY: bump-version
 bump-version:

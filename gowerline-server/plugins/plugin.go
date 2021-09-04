@@ -28,9 +28,9 @@ type Plugin struct {
 
 // PluginConfig will be passed down to plugins
 type PluginConfig struct {
-	UserHome string
+	UserHome     string
 	GowerlineDir string
-	PluginName string
+	PluginName   string
 }
 
 func NewPlugin(ctx context.Context, log *zap.Logger, filePath string, pluginConfig *PluginConfig) (*Plugin, error) {
