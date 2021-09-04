@@ -157,6 +157,7 @@ install-extension:
 
 .PHONY: install-server
 install-server: server stop
+	echo "Installing the server"
 	if ! [ -d ~/.gowerline ]; then mkdir ~/.gowerline; fi;
 	if ! [ -d ~/.gowerline/plugins ]; then mkdir ~/.gowerline/plugins; fi;
 	cp -v bin/gowerline-server-$(BINARY_SUFFIX) ~/.gowerline/gowerline-server
@@ -177,10 +178,6 @@ install-plugins: plugins
 
 .PHONY: install
 install: install-extension install-server install-plugins
-	if ! [ -d ~/.gowerline ]; then mkdir ~/.gowerline; fi;
-	if ! [ -d ~/.gowerline/plugins ]; then mkdir ~/.gowerline/plugins; fi;
-	cp -v bin/gowerline-server-$(BINARY_SUFFIX) ~/.gowerline/gowerline-server
-	cp -v bin/plugins/* ~/.gowerline/plugins
 	if ! [ -f ~/.gowerline/server.yaml ]; then cp -v server.yaml ~/.gowerline; fi;
 	if ! [ -d ~/.config/systemd/user ]; then mkdir ~/.config/systemd/user; fi
 	cp -v systemd/gowerline.service  ~/.config/systemd/user
