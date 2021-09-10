@@ -18,11 +18,14 @@ import (
 	"github.com/thomas-maurice/gowerline/gowerline-server/config"
 	"github.com/thomas-maurice/gowerline/gowerline-server/handlers"
 	"github.com/thomas-maurice/gowerline/gowerline-server/plugins"
+	"github.com/thomas-maurice/gowerline/gowerline-server/version"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 var (
 	configFile string
+	pluginDir  string
 	homeDir    string
 )
 
@@ -32,7 +35,9 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+	defaultPluginDir := path.Join(homeDir, ".gowerline", "plugins")
 
+	flag.StringVar(&pluginDir, "plugins", defaultPluginDir, "directory the plugins are at")
 	flag.StringVar(&configFile, "config", path.Join(homeDir, ".gowerline", "server.yaml"), "config file")
 }
 
@@ -46,6 +51,16 @@ func main() {
 		panic(err)
 	}
 
+	log.Info(
+		"starting gowerline server",
+		zap.String("version", version.Version),
+		zap.String("build_host", version.BuildHost),
+		zap.String("build_time", version.BuildTime),
+		zap.String("build_hash", version.BuildHash),
+		zap.String("target_os", version.OS),
+		zap.String("target_arch", version.Arch),
+	)
+
 	cfg, err := config.NewConfigFromFile(configFile)
 	if err != nil {
 		log.Panic("could not load config", zap.Error(err))
@@ -57,7 +72,7 @@ func main() {
 	pluginMap := make(map[string]*plugins.Plugin)
 	pluginList := make([]*plugins.Plugin, 0)
 	for _, plgName := range cfg.Plugins {
-		plgPath := path.Join(homeDir, ".gowerline", "plugins", plgName)
+		plgPath := path.Join(pluginDir, plgName)
 		plg, err := plugins.NewPlugin(ctx, log, plgPath, &plugins.PluginConfig{
 			UserHome:     homeDir,
 			GowerlineDir: path.Join(homeDir, ".gowerline"),
@@ -83,12 +98,18 @@ func main() {
 
 	r := gin.New()
 
-	r.Use(ginzap.Ginzap(log, time.RFC3339, true))
+	ginLoggerConfig := zap.NewProductionConfig()
+	ginLoggerConfig.Level = zap.NewAtomicLevelAt(zapcore.ErrorLevel)
+	ginLogger, err := ginLoggerConfig.Build()
+	if err != nil {
+		log.Panic("could not setup gin logger", zap.Error(err))
+	}
+	r.Use(ginzap.Ginzap(ginLogger, time.RFC3339, true))
 	r.Use(ginzap.RecoveryWithZap(log, true))
 
 	err = handlers.SetupHandlers(r, ctx, log, pluginMap)
 	if err != nil {
-		log.Panic("could not setup handler", zap.Error(err))
+		log.Panic("could not setup handlers", zap.Error(err))
 	}
 
 	go func() {

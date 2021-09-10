@@ -41,25 +41,14 @@ from subprocess import Popen, PIPE
 
 def call_git_describe(abbrev):
     try:
-        p = Popen(['bash', '-c', 'git tag | tail -n1'],
+        p = Popen(['bash', '-c', "make version | grep Version | awk '{ print $3 }' | sed -e 's/,$//'"],
                   stdout=PIPE, stderr=PIPE)
         p.stderr.close()
         line = p.stdout.readlines()[0]
         return bytes(line.strip())
 
     except:
-        return bytes("v0.0.0")
-
-
-def is_dirty():
-    try:
-        p = Popen(["git", "diff-index", "--name-only", "HEAD"],
-                  stdout=PIPE, stderr=PIPE)
-        p.stderr.close()
-        lines = p.stdout.readlines()
-        return len(lines) > 0
-    except:
-        return False
+        return bytes("v0.0.0", "ascii")
 
 
 def write_release_version(version):
@@ -70,8 +59,6 @@ def write_release_version(version):
 
 def get_git_version(abbrev=7):
     version = call_git_describe(abbrev)
-    if is_dirty():
-        version += bytes("-dirty", "ascii")
 
     if version is None:
         raise ValueError("Cannot find the version number!")
