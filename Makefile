@@ -131,7 +131,7 @@ start:
 
 .PHONY: stop
 stop:
-	systemctl --user stop gowerline
+	systemctl --user stop gowerline || true
 
 .PHONY: restart
 restart:
@@ -179,16 +179,16 @@ install-plugins: plugins
 .PHONY: install
 install: install-extension install-server install-plugins
 	if ! [ -f ~/.gowerline/server.yaml ]; then cp -v server.yaml ~/.gowerline; fi;
-	if ! [ -d ~/.config/systemd/user ]; then mkdir ~/.config/systemd/user; fi
+	if ! [ -d ~/.config/systemd/user ]; then mkdir -p ~/.config/systemd/user; fi
 	cp -v systemd/gowerline.service  ~/.config/systemd/user
 	pip3 install --editable $(shell pwd)
 
 .PHONY: install-full
-install-full: install install-systemd
+install-full: install-systemd install
 
 .PHONY: install-systemd
 install-systemd:
-	if ! [ -d ~/.config/systemd/user ]; then mkdir ~/.config/systemd/user; fi
+	if ! [ -d ~/.config/systemd/user ]; then mkdir -p ~/.config/systemd/user; fi
 	cp -v systemd/gowerline.service  ~/.config/systemd/user
 	systemctl --user daemon-reload
 	systemctl --user restart gowerline
