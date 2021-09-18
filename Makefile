@@ -97,10 +97,13 @@ GOFLAGS := -ldflags \
 BINARY_SUFFIX := $(VERSION)_$(shell go env GOOS)_$(shell go env GOARCH)
 
 clean:
-	rm -rf ./bin
+	rm -rf ./bin __pycache__ gowerline.egg-info build dist
 
 .PHONY: bump-version
 bump-version:
+	echo "$(BUMPED_VERSION)" > VERSION
+	git add VERSION
+	git commit -m "bump version $(VERSION) -> $(BUMPED_VERSION)"
 	git tag $(BUMPED_VERSION) -m "bump version $(VERSION) -> $(BUMPED_VERSION)"
 	@echo "Don't forget to git push --tags, run make push_tags"
 

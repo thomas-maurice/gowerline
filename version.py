@@ -37,10 +37,14 @@
 __all__ = ("get_git_version")
 
 from subprocess import Popen, PIPE
+import os.path
 
 
 def call_git_describe(abbrev):
     try:
+        if not os.path.isdir(".git"):
+            raise Exception("not in a git repo")
+
         p = Popen(['bash', '-c', "make version | grep Version | awk '{ print $3 }' | sed -e 's/,$//'"],
                   stdout=PIPE, stderr=PIPE)
         p.stderr.close()
@@ -48,7 +52,8 @@ def call_git_describe(abbrev):
         return bytes(line.strip())
 
     except:
-        return bytes("v0.0.0", "ascii")
+        versionFile = open("VERSION", "r")
+        return versionFile.read().strip()
 
 
 def write_release_version(version):
