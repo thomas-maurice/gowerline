@@ -87,8 +87,14 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 	}
 
 	return &types.PluginStartData{
-		Functions: []string{
-			"colourenv",
+		Functions: []types.FunctionDescriptor{
+			{
+				Name:        "colourenv",
+				Description: "Returns the value of environment variables coloured depending on the value",
+				Parameters: map[string]string{
+					"variable": "Environement variable to check",
+				},
+			},
 		},
 	}, nil
 }

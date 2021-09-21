@@ -33,7 +33,13 @@ type PowerlineReturn struct {
 // Contains registration data like the functions
 // that the plugin maps to
 type PluginStartData struct {
-	Functions []string `json:"functions"`
+	Functions []FunctionDescriptor `json:"functions"`
+}
+
+type FunctionDescriptor struct {
+	Name        string            `json:"name"`
+	Description string            `json:"description"`
+	Parameters  map[string]string `json:"parameters"`
 }
 
 // ServerVersioInfo contains various infos about the server

@@ -83,9 +83,9 @@ var serverRunCmd = &cobra.Command{
 				log.Info(
 					"registered new function for plugin",
 					zap.String("plugin", plgName),
-					zap.String("function", fn),
+					zap.String("function", fn.Name),
 				)
-				pluginMap[fn] = plg
+				pluginMap[fn.Name] = plg
 			}
 			pluginList = append(pluginList, plg)
 		}

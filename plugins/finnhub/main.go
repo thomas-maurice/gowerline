@@ -101,8 +101,14 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 	go run(log)
 
 	return &types.PluginStartData{
-		Functions: []string{
-			"ticker",
+		Functions: []types.FunctionDescriptor{
+			{
+				Name:        "ticker",
+				Description: "Returns the stock price of a given ticket",
+				Parameters: map[string]string{
+					"ticker": "Symbol of the ticker to return",
+				},
+			},
 		},
 	}, nil
 }

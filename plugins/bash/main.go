@@ -155,8 +155,14 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 	go run(log)
 
 	return &types.PluginStartData{
-		Functions: []string{
-			"bash",
+		Functions: []types.FunctionDescriptor{
+			{
+				Name:        "bash",
+				Description: "Runs bash functions at regular intervals and displays the output",
+				Parameters: map[string]string{
+					"cmd": "Name of the command to run",
+				},
+			},
 		},
 	}, nil
 }

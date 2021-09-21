@@ -22,8 +22,8 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 		"started plugin",
 	)
 	return &types.PluginStartData{
-		Functions: []string{
-			"time",
+		Functions: []types.FunctionDescriptor{
+			{Name: "time", Description: "Displays the current tine"},
 		},
 	}, nil
 }

@@ -210,8 +210,14 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 	go run(log)
 
 	return &types.PluginStartData{
-		Functions: []string{
-			"vault",
+		Functions: []types.FunctionDescriptor{
+			{
+				Name:        "vault",
+				Description: "Displays informations about Vault using a formatting string",
+				Parameters: map[string]string{
+					"template": "Template string to render",
+				},
+			},
 		},
 	}, nil
 }
