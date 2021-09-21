@@ -12,6 +12,7 @@ type Config struct {
 		Unix string `yaml:"unix"`
 	} `yaml:"listen"`
 	Plugins []string `yaml:"plugins"`
+	Debug   bool     `yaml:"debug"`
 }
 
 func NewConfigFromFile(configFile string) (*Config, error) {

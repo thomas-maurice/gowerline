@@ -13,6 +13,7 @@ var (
 	configFile string
 	pluginsDir string
 	homeDir    string
+	marshaller string
 	log        *zap.Logger
 )
 
@@ -38,8 +39,14 @@ func init() {
 	defaultPluginDir := path.Join(homeDir, ".gowerline", "plugins")
 	defaultConfigFile := path.Join(homeDir, ".gowerline", "gowerline.yaml")
 
+	log, err = zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+
 	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", defaultConfigFile, "Default config file")
 	rootCmd.PersistentFlags().StringVarP(&pluginsDir, "plugins", "p", defaultPluginDir, "Default plugin directory")
+	rootCmd.PersistentFlags().StringVarP(&marshaller, "marshaller", "m", "yaml", "Marshaller for server responses (client mode)")
 
 	initServerCmd()
 	rootCmd.AddCommand(serverCmd)

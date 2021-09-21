@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/signal"
 	"os/user"
@@ -18,6 +20,8 @@ import (
 	"github.com/thomas-maurice/gowerline/gowerline-server/config"
 	"github.com/thomas-maurice/gowerline/gowerline-server/handlers"
 	"github.com/thomas-maurice/gowerline/gowerline-server/plugins"
+	"github.com/thomas-maurice/gowerline/gowerline-server/types"
+	"github.com/thomas-maurice/gowerline/gowerline-server/utils"
 	"github.com/thomas-maurice/gowerline/gowerline-server/version"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -89,7 +93,11 @@ var serverRunCmd = &cobra.Command{
 		r := gin.New()
 
 		ginLoggerConfig := zap.NewProductionConfig()
-		ginLoggerConfig.Level = zap.NewAtomicLevelAt(zapcore.ErrorLevel)
+		if cfg.Debug {
+			ginLoggerConfig.Level = zap.NewAtomicLevelAt(zapcore.InfoLevel)
+		} else {
+			ginLoggerConfig.Level = zap.NewAtomicLevelAt(zapcore.ErrorLevel)
+		}
 		ginLogger, err := ginLoggerConfig.Build()
 		if err != nil {
 			log.Panic("could not setup gin logger", zap.Error(err))
@@ -148,6 +156,39 @@ var serverRunCmd = &cobra.Command{
 	},
 }
 
+var serverVersionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Returns the version of the server",
+	Long:  ``,
+	Run: func(cmd *cobra.Command, args []string) {
+		cfg, err := config.NewConfigFromFile(configFile)
+		if err != nil {
+			log.Panic("could not load config", zap.Error(err))
+		}
+
+		client := utils.NewHTTPClientFromConfig(cfg)
+
+		resp, err := client.Get(utils.BaseURLFromConfig(cfg) + "/version")
+		if err != nil {
+			log.Fatal("could not fetch the server's version", zap.Error(err))
+		}
+		b, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal("could not read http response", zap.Error(err))
+		}
+		defer resp.Body.Close()
+
+		var serverInfo types.ServerVersionInfo
+		err = json.Unmarshal(b, &serverInfo)
+		if err != nil {
+			log.Fatal("could not unmarshal server response", zap.Error(err))
+		}
+
+		output(serverInfo)
+	},
+}
+
 func initServerCmd() {
 	serverCmd.AddCommand(serverRunCmd)
+	serverCmd.AddCommand(serverVersionCmd)
 }

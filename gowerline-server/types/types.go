@@ -35,3 +35,14 @@ type PowerlineReturn struct {
 type PluginStartData struct {
 	Functions []string `json:"functions"`
 }
+
+// ServerVersioInfo contains various infos about the server
+// such as build version, date, arch and OS
+type ServerVersionInfo struct {
+	Version         string `json:"version" yaml:"version"`
+	BuildHost       string `json:"build_host" yaml:"build_host"`
+	BuildDate       string `json:"build_date" yaml:"build_date"`
+	GitHash         string `json:"git_hash" yaml:"git_hash"`
+	Architecture    string `json:"architecture" yaml:"architecture"`
+	OperatingSystem string `json:"operating_system" yaml:"operating_system"`
+}

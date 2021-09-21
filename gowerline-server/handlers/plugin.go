@@ -13,8 +13,6 @@ import (
 	"go.uber.org/zap"
 )
 
-func PluginHandler(c *gin.Context) {}
-
 func BuildPluginHandler(ctx context.Context, log *zap.Logger, pluginMap map[string]*plugins.Plugin) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var payload types.Payload
