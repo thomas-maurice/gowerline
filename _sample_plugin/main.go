@@ -84,8 +84,14 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 	go run(log)
 
 	return &types.PluginStartData{
-		Functions: []string{
-			"some_function",
+		Functions: []types.FunctionDescriptor{
+			{
+				Name:        "some_function",
+				Description: "some description",
+				Parameters: map[string]string{
+					"a_param": "some help about it",
+				},
+			},
 		},
 	}, nil
 }
