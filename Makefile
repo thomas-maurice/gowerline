@@ -184,7 +184,6 @@ install: install-extension install-server install-plugins
 	if ! [ -f ~/.gowerline/server.yaml ]; then cp -v server.yaml ~/.gowerline; fi;
 	if ! [ -d ~/.config/systemd/user ]; then mkdir -p ~/.config/systemd/user; fi
 	cp -v systemd/gowerline.service  ~/.config/systemd/user
-	pip3 install --editable $(shell pwd)
 
 .PHONY: install-full
 install-full: install-systemd install
