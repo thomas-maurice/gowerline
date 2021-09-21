@@ -113,7 +113,8 @@ class Gowerline(Segment):
             returnedSegment = returnedSegments
         except Exception as exce:
             logging.error(
-                "failed to run {}: {}".format(kwargs, traceback.format_exc()),
+                "failed to run {}: {}".format(
+                    kwargs, traceback.format_exc()),
 
             )
 

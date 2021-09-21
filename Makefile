@@ -183,7 +183,7 @@ install-plugins: plugins
 
 .PHONY: copy-config
 copy-config:
-	if ! [ -f ~/.gowerline/server.yaml ]; then cp -v server.yaml ~/.gowerline; fi;
+	if ! [ -f ~/.gowerline/gowerline.yaml ]; then cp -v gowerline.yaml ~/.gowerline; fi;
 
 .PHONY: install
 install: install-extension install-server install-plugins copy-config restart
