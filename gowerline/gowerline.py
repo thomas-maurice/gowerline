@@ -22,7 +22,7 @@ defaultConf = {
 }
 
 logPath = os.path.join(str(Path.home()), ".gowerline")
-cfgPath = os.path.join(str(Path.home()), ".gowerline", "server.yaml")
+cfgPath = os.path.join(str(Path.home()), ".gowerline", "gowerline.yaml")
 cfg = {}
 
 if not os.path.isdir(logPath):

@@ -133,6 +133,10 @@ start:
 	systemctl --user enable gowerline
 	systemctl --user start gowerline
 
+.PHONY: restart-powerline
+restart-powerline:
+	if pgrep -f powerline-daemon; then powerline-daemon --replace; fi;
+
 .PHONY: stop
 stop:
 	systemctl --user stop gowerline || true
@@ -158,6 +162,8 @@ run: install-extension install-server install-plugins
 .PHONY: install-extension
 install-extension:
 	pip3 install --editable $(shell pwd)
+	if pgrep -f powerline-daemon; then powerline-daemon --replace; fi;
+
 
 .PHONY: install-server
 install-server: server stop
