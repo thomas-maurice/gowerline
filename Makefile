@@ -130,6 +130,7 @@ archive: plugins
 
 .PHONY: start
 start:
+	systemctl --user enable gowerline
 	systemctl --user start gowerline
 
 .PHONY: stop
@@ -179,11 +180,12 @@ install-plugins: plugins
 	done;
 	cp -v bin/plugins/* ~/.gowerline/plugins
 
-.PHONY: install
-install: install-extension install-server install-plugins
+.PHONY: copy-config
+copy-config:
 	if ! [ -f ~/.gowerline/server.yaml ]; then cp -v server.yaml ~/.gowerline; fi;
-	if ! [ -d ~/.config/systemd/user ]; then mkdir -p ~/.config/systemd/user; fi
-	cp -v systemd/gowerline.service  ~/.config/systemd/user
+
+.PHONY: install
+install: install-extension install-server install-plugins copy-config restart
 
 .PHONY: install-full
 install-full: install-systemd install
@@ -193,7 +195,6 @@ install-systemd:
 	if ! [ -d ~/.config/systemd/user ]; then mkdir -p ~/.config/systemd/user; fi
 	cp -v systemd/gowerline.service  ~/.config/systemd/user
 	systemctl --user daemon-reload
-	systemctl --user restart gowerline
 	systemctl --user enable gowerline
 
 .PHONY: uninstall
@@ -202,3 +203,4 @@ uninstall:
 	systemctl --user disable gowerline
 	rm -r ~/.gowerline
 	rm -f ~/.config/systemd/user/gowerline.service
+	systemctl --user daemon-reload
