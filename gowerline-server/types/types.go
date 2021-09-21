@@ -37,9 +37,15 @@ type PluginStartData struct {
 }
 
 type FunctionDescriptor struct {
-	Name        string            `json:"name"`
-	Description string            `json:"description"`
-	Parameters  map[string]string `json:"parameters"`
+	Name        string            `json:"name" yaml:"name"`
+	Description string            `json:"description" yaml:"description"`
+	Parameters  map[string]string `json:"parameters" yaml:"parameters"`
+}
+
+type PluginStatus struct {
+	Name        string               `json:"name" yaml:"name"`
+	Description string               `json:"description" yaml:"description"`
+	Functions   []FunctionDescriptor `json:"functions" yaml:"functions"`
 }
 
 // ServerVersioInfo contains various infos about the server
