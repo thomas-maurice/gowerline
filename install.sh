@@ -47,10 +47,13 @@ echo " - Cleaning up"
 rm -r "${TEMPDIR}"
 rm ~/.gowerline/plugins.tgz
 
+~/.gowerline/bin/gowerline server-version
+~/.gowerline/bin/gowerline plugin list
+
 cat <<EOF
 
 Remember to add ~/.gowerline/bin to your path so you can use the cli !
 
  $ export PATH=\${PATH}:\${HOME}/.gowerline/bin
- 
+
 EOF
