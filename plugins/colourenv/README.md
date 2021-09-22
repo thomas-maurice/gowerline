@@ -4,7 +4,8 @@ Returns an different colour segment depending on the value of an env variable an
 
 ## How to configure the plugin
 
-Configure it in in `~/.gowerline/colourenv.yaml` like so:
+You need to add the following config structure in the `plugin[].config` field of the `~/.gowerline/gowerline.yaml` file
+
 ```yaml
 ---
 variables:

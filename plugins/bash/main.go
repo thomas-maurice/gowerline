@@ -4,9 +4,7 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
 	"os/exec"
-	"path"
 	"strings"
 	"sync"
 	"time"
@@ -14,7 +12,6 @@ import (
 	"github.com/thomas-maurice/gowerline/gowerline-server/plugins"
 	"github.com/thomas-maurice/gowerline/gowerline-server/types"
 	"go.uber.org/zap"
-	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -143,16 +140,10 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 	cacheMutex = &sync.Mutex{}
 	runners = make([]*commandRunner, 0)
 
-	configBytes, err := ioutil.ReadFile(path.Join(pluginConfig.GowerlineDir, "bash.yaml"))
+	err := pluginConfig.Config.Decode(&cfg)
 	if err != nil {
 		log.Panic("could not load configuration", zap.Error(err))
 	}
-
-	err = yaml.Unmarshal(configBytes, &cfg)
-	if err != nil {
-		log.Panic("could not load configuration", zap.Error(err))
-	}
-
 	go run(log)
 
 	return &types.PluginStartData{

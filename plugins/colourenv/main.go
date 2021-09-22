@@ -4,14 +4,11 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
-	"path"
 	"regexp"
 
 	"github.com/thomas-maurice/gowerline/gowerline-server/plugins"
 	"github.com/thomas-maurice/gowerline/gowerline-server/types"
 	"go.uber.org/zap"
-	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -66,12 +63,7 @@ type pluginArgs struct {
 }
 
 func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error) {
-	configBytes, err := ioutil.ReadFile(path.Join(pluginConfig.GowerlineDir, "colourenv.yaml"))
-	if err != nil {
-		log.Panic("could not load configuration", zap.Error(err))
-	}
-
-	err = yaml.Unmarshal(configBytes, &cfg)
+	err := pluginConfig.Config.Decode(&cfg)
 	if err != nil {
 		log.Panic("could not load configuration", zap.Error(err))
 	}

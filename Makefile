@@ -178,13 +178,6 @@ install-server: server stop
 install-plugins: plugins
 	if ! [ -d ~/.gowerline ]; then mkdir ~/.gowerline; fi;
 	if ! [ -d ~/.gowerline/plugins ]; then mkdir ~/.gowerline/plugins; fi;
-	for plg in $(shell ls plugins); do \
-		if ! [ -f ~/.gowerline/$${plg}.yaml ]; then \
-			if [ -f plugins/$${plg}/$${plg}.yaml ]; then \
-				cp -v plugins/$${plg}/$${plg}.yaml ~/.gowerline/$${plg}.yaml; \
-			fi; \
-		fi; \
-	done;
 	cp -v bin/plugins/* ~/.gowerline/plugins
 
 .PHONY: copy-config

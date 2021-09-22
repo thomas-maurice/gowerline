@@ -5,15 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"path"
 	"time"
 
 	"github.com/Finnhub-Stock-API/finnhub-go"
 	"github.com/thomas-maurice/gowerline/gowerline-server/plugins"
 	"github.com/thomas-maurice/gowerline/gowerline-server/types"
 	"go.uber.org/zap"
-	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -85,12 +82,7 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 	stopChannel = make(chan bool)
 	stoppedChannel = make(chan bool)
 
-	configBytes, err := ioutil.ReadFile(path.Join(pluginConfig.GowerlineDir, "finnhub.yaml"))
-	if err != nil {
-		log.Panic("could not load configuration", zap.Error(err))
-	}
-
-	err = yaml.Unmarshal(configBytes, &cfg)
+	err := pluginConfig.Config.Decode(&cfg)
 	if err != nil {
 		log.Panic("could not load configuration", zap.Error(err))
 	}
