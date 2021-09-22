@@ -43,7 +43,7 @@ echo " - Installing systemd unit file"
 cp "${TEMPDIR}/${releaseDirName}/systemd/gowerline.service" ~/.config/systemd/user/gowerline.service
 
 echo " - Installing config file if not present"
-if ! [ -f ~/.gowerline/gowerline.yaml ]; then cp -v "${TEMPDIR}/${releaseDirName}/systemd/gowerline.service" ~/.config/systemd/user/gowerline.service; fi;
+if ! [ -f ~/.gowerline/gowerline.yaml ]; then cp -v "${TEMPDIR}/${releaseDirName}/gowerline.yaml" ~/.gowerline/gowerline.yaml; fi;
 
 echo " - Refreshing systemd and restart gowerline"
 systemctl --user daemon-reload
