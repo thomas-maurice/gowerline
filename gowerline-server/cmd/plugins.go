@@ -57,6 +57,58 @@ var pluginListCmd = &cobra.Command{
 	},
 }
 
+var pluginFunctionsCmd = &cobra.Command{
+	Use:   "functions",
+	Short: "Retrieves info about a specific plugin's functions",
+	Long:  ``,
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) != 1 {
+			log.Fatal("you must pass the plugin's name")
+		}
+
+		cfg, err := config.NewConfigFromFile(configFile)
+		if err != nil {
+			log.Panic("could not load config", zap.Error(err))
+		}
+
+		client := utils.NewHTTPClientFromConfig(cfg)
+
+		resp, err := client.Get(utils.BaseURLFromConfig(cfg) + "/plugins")
+		if err != nil {
+			log.Fatal("could not fetch the server's version", zap.Error(err))
+		}
+		b, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal("could not read http response", zap.Error(err))
+		}
+		defer resp.Body.Close()
+
+		pluginInfo := make(map[string]types.PluginMetadata)
+		err = json.Unmarshal(b, &pluginInfo)
+		if err != nil {
+			log.Fatal("could not unmarshal server response", zap.Error(err))
+		}
+
+		for name, meta := range pluginInfo {
+			if name == args[0] {
+				table := tablewriter.NewWriter(os.Stdout)
+				table.SetHeader([]string{"Function name", "Description", "Argument", "Argument help"})
+				for _, functionMeta := range meta.Functions {
+					table.Append([]string{functionMeta.Name, functionMeta.Description, "", ""})
+					for paramName, paramDesc := range functionMeta.Parameters {
+						table.Append([]string{"", "", paramName, paramDesc})
+					}
+				}
+				table.Render()
+				return
+			}
+		}
+
+		log.Fatal("no such plugin", zap.String("plugin", args[0]))
+	},
+}
+
 func initPluginCommand() {
 	pluginCmd.AddCommand(pluginListCmd)
+	pluginCmd.AddCommand(pluginFunctionsCmd)
 }
