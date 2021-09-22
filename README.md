@@ -10,6 +10,12 @@ This project has 2 parts:
 * The daemon that runs your go code and exposes an HTTP API
 * The powerline compatible code that glues it with the `powerline-daemon`
 
+## Quick install
+You can grab the latest version of gowerline by running the following (needs curl, jq, tar and wget)
+
+```
+curl -sSfL https://raw.githubusercontent.com/thomas-maurice/gowerline/master/install.sh | bash
+```
 ## How does it work ?
 This is a pluggable segment generating system. Essentially a very simple powerline "segment" in the sense
 of the python class, will call a Go server that will be in charge of generating the actual segments. It allows you
