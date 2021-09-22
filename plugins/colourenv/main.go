@@ -1,3 +1,4 @@
+//nolint:unused
 package main
 
 import (
@@ -140,7 +141,7 @@ func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*type
 }
 
 // Init builds and returns the plugin itself
-func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*plugins.Plugin, error) {
+func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*plugins.Plugin, error) { //nolint:deadcode
 	log.Info(
 		"loaded plugin",
 	)
