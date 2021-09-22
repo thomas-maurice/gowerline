@@ -15,6 +15,7 @@ var (
 	homeDir    string
 	marshaller string
 	log        *zap.Logger
+	debug      bool
 )
 
 var rootCmd = &cobra.Command{
@@ -45,8 +46,9 @@ func init() {
 	}
 
 	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", defaultConfigFile, "Default config file")
+	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "Toggle debug mode")
 	rootCmd.PersistentFlags().StringVarP(&pluginsDir, "plugins", "p", defaultPluginDir, "Default plugin directory")
-	rootCmd.PersistentFlags().StringVarP(&marshaller, "marshaller", "m", "yaml", "Marshaller for server responses (client mode)")
+	rootCmd.PersistentFlags().StringVarP(&marshaller, "output", "o", "json", "Output format for server responses (client mode), must be yaml or json")
 
 	initServerCmd()
 	initPluginCommand()
