@@ -22,7 +22,7 @@ defaultConf = {
 }
 
 logPath = os.path.join(str(Path.home()), ".gowerline")
-cfgPath = os.path.join(str(Path.home()), ".gowerline", "server.yaml")
+cfgPath = os.path.join(str(Path.home()), ".gowerline", "gowerline.yaml")
 cfg = {}
 
 if not os.path.isdir(logPath):
@@ -113,7 +113,8 @@ class Gowerline(Segment):
             returnedSegment = returnedSegments
         except Exception as exce:
             logging.error(
-                "failed to run {}: {}".format(kwargs, traceback.format_exc()),
+                "failed to run {}: {}".format(
+                    kwargs, traceback.format_exc()),
 
             )
 

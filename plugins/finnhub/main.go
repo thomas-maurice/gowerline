@@ -1,3 +1,4 @@
+//nolint:unused
 package main
 
 import (
@@ -101,8 +102,19 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 	go run(log)
 
 	return &types.PluginStartData{
-		Functions: []string{
-			"ticker",
+		Metadata: types.PluginMetadata{
+			Description: "Returns information about the stock price of certain tickers",
+			Author:      "Thomas Maurice <thomas@maurice.fr>",
+			Version:     "0.0.1",
+			Functions: []types.FunctionDescriptor{
+				{
+					Name:        "ticker",
+					Description: "Returns the stock price of a given ticket",
+					Parameters: map[string]string{
+						"ticker": "Symbol of the ticker to return",
+					},
+				},
+			},
 		},
 	}, nil
 }
@@ -153,7 +165,7 @@ func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*type
 }
 
 // Init builds and returns the plugin itself
-func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*plugins.Plugin, error) {
+func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*plugins.Plugin, error) { //nolint:deadcode
 	log.Info(
 		"loaded plugin",
 	)

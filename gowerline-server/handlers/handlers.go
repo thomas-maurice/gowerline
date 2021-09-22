@@ -12,5 +12,8 @@ import (
 func SetupHandlers(router *gin.Engine, ctx context.Context, log *zap.Logger, plugins map[string]*plugins.Plugin) error {
 	router.GET("/ping", PingHandler)
 	router.POST("/plugin", BuildPluginHandler(ctx, log, plugins))
+	router.GET("/plugins", BuildPluginStatusHandler(ctx, log, plugins))
+	router.GET("/version", versionHandler)
+
 	return nil
 }

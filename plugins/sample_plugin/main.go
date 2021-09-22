@@ -1,3 +1,4 @@
+//nolint:unused
 package main
 
 import (
@@ -54,7 +55,7 @@ func run(log *zap.Logger) {
 		select {
 		case <-tck.C:
 			// Do something here
-			update(log)
+			err = update(log)
 			if err != nil {
 				log.Error("could not update data", zap.Error(err))
 			}
@@ -83,9 +84,24 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 	}
 	go run(log)
 
+	// We return the metadata here instead of the `Init` function. This is because
+	// some plugins might expose some compute intensive things sometimes and might
+	// want to deactivate functions at config time, hence returning the metadata
+	// and functions list only once the configuration file has been loaded
 	return &types.PluginStartData{
-		Functions: []string{
-			"some_function",
+		Metadata: types.PluginMetadata{
+			Description: "Example plugin to show people how it works",
+			Author:      "Thomas Maurice <thomas@maurice.fr>",
+			Version:     "devel",
+			Functions: []types.FunctionDescriptor{
+				{
+					Name:        "some_function",
+					Description: "some description",
+					Parameters: map[string]string{
+						"a_param": "some help about it",
+					},
+				},
+			},
 		},
 	}, nil
 }
@@ -130,7 +146,7 @@ func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*type
 }
 
 // Init builds and returns the plugin itself
-func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*plugins.Plugin, error) {
+func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*plugins.Plugin, error) { //nolint:deadcode
 	log.Info(
 		"loaded plugin",
 	)
@@ -142,5 +158,9 @@ func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*pl
 		Stop:  Stop,
 		Call:  Call,
 		Name:  pCfg.PluginName,
+		// Notice how you do not return any Metadata here ? This is because
+		// it has to be returned after the `Start` function, for reasons explained
+		// above. Regardless of if you populate metadata here, it will be overwritten
+		// by whatever the `Start` function returns.
 	}, nil
 }

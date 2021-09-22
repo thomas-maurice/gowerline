@@ -1,3 +1,4 @@
+//nolint:unused
 package main
 
 import (
@@ -22,8 +23,13 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 		"started plugin",
 	)
 	return &types.PluginStartData{
-		Functions: []string{
-			"time",
+		Metadata: types.PluginMetadata{
+			Description: "Shows time, it is a debug segment",
+			Author:      "Thomas Maurice <thomas@maurice.fr>",
+			Version:     "0.0.1",
+			Functions: []types.FunctionDescriptor{
+				{Name: "time", Description: "Displays the current tine"},
+			},
 		},
 	}, nil
 }
@@ -50,7 +56,7 @@ func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*type
 }
 
 // Init builds and returns the plugin itself
-func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*plugins.Plugin, error) {
+func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*plugins.Plugin, error) { //nolint:deadcode
 	log.Info(
 		"loaded plugin",
 	)

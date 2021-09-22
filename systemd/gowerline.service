@@ -8,7 +8,7 @@ StartLimitIntervalSec=5
 Type=simple
 Restart=always
 RestartSec=5
-ExecStart=%h/.gowerline/gowerline-server
+ExecStart=%h/.gowerline/bin/gowerline server run -c %h/.gowerline/gowerline.yaml -p %h/.gowerline/plugins
 
 [Install]
 WantedBy=multi-user.target

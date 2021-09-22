@@ -133,6 +133,10 @@ start:
 	systemctl --user enable gowerline
 	systemctl --user start gowerline
 
+.PHONY: restart-powerline
+restart-powerline:
+	if pgrep -f powerline-daemon; then powerline-daemon --replace; fi;
+
 .PHONY: stop
 stop:
 	systemctl --user stop gowerline || true
@@ -143,7 +147,7 @@ restart:
 
 .PHONY: server
 server: bin
-	$(GOENV) go build -o bin/gowerline-server-$(BINARY_SUFFIX) $(GOFLAGS) ./gowerline-server
+	$(GOENV) go build -o bin/gowerline-$(BINARY_SUFFIX) $(GOFLAGS) ./gowerline-server
 
 .PHONY: plugins
 plugins:
@@ -153,18 +157,21 @@ plugins:
 
 .PHONY: run
 run: install-extension install-server install-plugins
-	~/.gowerline/gowerline-server
+	~/.gowerline/bin/gowerline
 
 .PHONY: install-extension
 install-extension:
 	pip3 install --editable $(shell pwd)
+	if pgrep -f powerline-daemon; then powerline-daemon --replace; fi;
+
 
 .PHONY: install-server
 install-server: server stop
 	echo "Installing the server"
 	if ! [ -d ~/.gowerline ]; then mkdir ~/.gowerline; fi;
 	if ! [ -d ~/.gowerline/plugins ]; then mkdir ~/.gowerline/plugins; fi;
-	cp -v bin/gowerline-server-$(BINARY_SUFFIX) ~/.gowerline/gowerline-server
+	if ! [ -d ~/.gowerline/bin ]; then mkdir ~/.gowerline/bin; fi;
+	cp -v bin/gowerline-$(BINARY_SUFFIX) ~/.gowerline/bin/gowerline
 	make start
 
 .PHONY: install-plugins
@@ -182,7 +189,7 @@ install-plugins: plugins
 
 .PHONY: copy-config
 copy-config:
-	if ! [ -f ~/.gowerline/server.yaml ]; then cp -v server.yaml ~/.gowerline; fi;
+	if ! [ -f ~/.gowerline/gowerline.yaml ]; then cp -v gowerline.yaml ~/.gowerline; fi;
 
 .PHONY: install
 install: install-extension install-server install-plugins copy-config restart

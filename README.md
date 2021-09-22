@@ -76,8 +76,64 @@ plugins:
 - colourenv
 ```
 
+## The command line
+The `gowerline` binary is also a commandline tool that allows you to interract with the server.
+You need to add the binary to your path like so:
+```bash
+export PATH=${PATH}:${HOME}/.gowerline/bin
+```
+
+You can list plugins and get help about a specific plugin like so:
+```
+./bin/gowerline-v0.0.3-15-2d4a3be-dirty-thomas_linux_amd64 plugin list
++-----------+--------------------------------+--------------------------------+--------+
+|   NAME    |          DESCRIPTION           |            VERSION             | AUTHOR |
++-----------+--------------------------------+--------------------------------+--------+
+| bash      | Executes bash commands on      | Thomas Maurice                 | 0.0.1  |
+|           | a schedule and returns the     | <thomas@maurice.fr>            |        |
+|           | result                         |                                |        |
+| colourenv | Displays the content of env    | Thomas Maurice                 | 0.0.1  |
+|           | vars with colours depending on | <thomas@maurice.fr>            |        |
+|           | matched regexes                |                                |        |
+| finnhub   | Returns information about the  | Thomas Maurice                 | 0.0.1  |
+|           | stock price of certain tickers | <thomas@maurice.fr>            |        |
+| time      | Shows time, it is a debug      | Thomas Maurice                 | 0.0.1  |
+|           | segment                        | <thomas@maurice.fr>            |        |
+| vault     | Gathers information about      | Thomas Maurice                 | 0.0.1  |
+|           | the current Vault token and    | <thomas@maurice.fr>            |        |
+|           | formats the result             |                                |        |
++-----------+--------------------------------+--------------------------------+--------+
+```
+
+You can also get help about a specific plugin, it will tell you what functions ship with a plugin and the arguments to include in your powerline json config:
+```
+./bin/gowerline-v0.0.3-15-2d4a3be-dirty-thomas_linux_amd64 plugin functions bash
++---------------+--------------------------------+----------+----------------------------+
+| FUNCTION NAME |          DESCRIPTION           | ARGUMENT |       ARGUMENT HELP        |
++---------------+--------------------------------+----------+----------------------------+
+| bash          | Runs bash functions at regular |          |                            |
+|               | intervals and displays the     |          |                            |
+|               | output                         |          |                            |
+|               |                                | cmd      | Name of the command to run |
++---------------+--------------------------------+----------+----------------------------+
+```
+
+You can also test what is going to be returned, instead of messing with a cURL command:
+```
+./bin/gowerline-v0.0.3-15-2d4a3be-dirty-thomas_linux_amd64 plugin function-run bash -a cmd=kubeContext -o json 
+[
+  {
+    "contents": "kubernetes",
+    "highlight_groups": [
+      "gwl:kube_context",
+      "information:regular"
+    ]
+  }
+]
+```
+
 ## How do I extend it ?
-Go have a look at the [example plugin](https://github.com/thomas-maurice/gowerline/blob/master/_sample_plugin/README.md). It should
+Go have a look at the [example plugin](https://github.com/thomas-maurice/gowerline/blob/master/plugins/sample_plugin/README.md). It should
 be easy to understand. Feel free to copy it in the `plugins/` directory and fill in the blanks.
 
 The `Makefile` is designed so that if you run `make plugins` your new source will be picked up and compiled to `bin/plugins/<plugin>`

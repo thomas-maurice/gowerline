@@ -13,8 +13,6 @@ import (
 	"go.uber.org/zap"
 )
 
-func PluginHandler(c *gin.Context) {}
-
 func BuildPluginHandler(ctx context.Context, log *zap.Logger, pluginMap map[string]*plugins.Plugin) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var payload types.Payload
@@ -25,8 +23,8 @@ func BuildPluginHandler(ctx context.Context, log *zap.Logger, pluginMap map[stri
 				"could not read request",
 				zap.Error(err),
 			)
-			c.JSON(http.StatusInternalServerError, types.PowerlineReturn{
-				Content: fmt.Sprintf("err: %s", err),
+			c.JSON(http.StatusInternalServerError, []types.PowerlineReturn{
+				{Content: fmt.Sprintf("err: %s", err)},
 			})
 			return
 		}
@@ -37,16 +35,16 @@ func BuildPluginHandler(ctx context.Context, log *zap.Logger, pluginMap map[stri
 				"could not unmarshal request",
 				zap.Error(err),
 			)
-			c.JSON(http.StatusInternalServerError, types.PowerlineReturn{
-				Content: fmt.Sprintf("err: %s", err),
+			c.JSON(http.StatusInternalServerError, []types.PowerlineReturn{
+				{Content: fmt.Sprintf("err: %s", err)},
 			})
 			return
 		}
 
 		plg, ok := pluginMap[payload.Function]
 		if !ok {
-			c.JSON(http.StatusNotFound, types.PowerlineReturn{
-				Content: fmt.Sprintf("no such plugin %s", payload.Function),
+			c.JSON(http.StatusNotFound, []types.PowerlineReturn{
+				{Content: fmt.Sprintf("no such function %s", payload.Function)},
 			})
 			return
 		}
@@ -60,8 +58,8 @@ func BuildPluginHandler(ctx context.Context, log *zap.Logger, pluginMap map[stri
 				"could not unmarshal request",
 				zap.Error(err),
 			)
-			c.JSON(http.StatusInternalServerError, types.PowerlineReturn{
-				Content: fmt.Sprintf("err:%s %s", payload.Function, err),
+			c.JSON(http.StatusInternalServerError, []types.PowerlineReturn{
+				{Content: fmt.Sprintf("err:%s %s", payload.Function, err)},
 			})
 			return
 		}

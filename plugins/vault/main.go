@@ -1,3 +1,4 @@
+//nolint:unused
 package main
 
 import (
@@ -210,8 +211,19 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 	go run(log)
 
 	return &types.PluginStartData{
-		Functions: []string{
-			"vault",
+		Metadata: types.PluginMetadata{
+			Description: "Gathers information about the current Vault token and formats the result",
+			Author:      "Thomas Maurice <thomas@maurice.fr>",
+			Version:     "0.0.1",
+			Functions: []types.FunctionDescriptor{
+				{
+					Name:        "vault",
+					Description: "Displays informations about Vault using a formatting string",
+					Parameters: map[string]string{
+						"template": "Template string to render",
+					},
+				},
+			},
 		},
 	}, nil
 }
@@ -266,7 +278,7 @@ func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*type
 }
 
 // Init builds and returns the plugin itself
-func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*plugins.Plugin, error) {
+func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*plugins.Plugin, error) { //nolint:deadcode
 	log.Info(
 		"loaded plugin",
 		zap.String("plugin", pluginName),
