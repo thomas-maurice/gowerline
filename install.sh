@@ -33,7 +33,7 @@ if pgrep -f powerline-daemon >/dev/null; then powerline-daemon --replace; fi;
 
 echo " - Installing gowerline binary"
 wget -O ~/.gowerline/bin/gowerline "https://github.com/thomas-maurice/gowerline/releases/download/${tagName}/gowerline-${tagName}_linux_amd64" > /dev/null 2>&1
-chmod +x ~/.gowerline/bin/gowerline 
+chmod +x ~/.gowerline/bin/gowerline
 
 echo " - Installing plugins"
 wget -O ~/.gowerline/plugins.tgz "https://github.com/thomas-maurice/gowerline/releases/download/${tagName}/plugins-${tagName}_linux_amd64.tar.gz" > /dev/null 2>&1
@@ -49,6 +49,9 @@ echo " - Refreshing systemd and restart gowerline"
 systemctl --user daemon-reload
 systemctl start --user gowerline
 systemctl enable --user gowerline
+
+echo " - Stopping gowerline if it is running"
+systemctl stop --user gowerline || true
 
 echo " - Cleaning up"
 rm -r "${TEMPDIR}"
