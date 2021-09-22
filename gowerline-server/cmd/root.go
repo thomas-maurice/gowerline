@@ -49,5 +49,10 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&marshaller, "marshaller", "m", "yaml", "Marshaller for server responses (client mode)")
 
 	initServerCmd()
+	initPluginCommand()
+
 	rootCmd.AddCommand(serverCmd)
+	rootCmd.AddCommand(serverVersionCmd)
+	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(pluginCmd)
 }

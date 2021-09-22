@@ -56,7 +56,7 @@ type PluginMetadata struct {
 type ServerVersionInfo struct {
 	Version         string `json:"version" yaml:"version"`
 	BuildHost       string `json:"build_host" yaml:"build_host"`
-	BuildDate       string `json:"build_date" yaml:"build_date"`
+	BuildTime       string `json:"build_date" yaml:"build_time"`
 	GitHash         string `json:"git_hash" yaml:"git_hash"`
 	Architecture    string `json:"architecture" yaml:"architecture"`
 	OperatingSystem string `json:"operating_system" yaml:"operating_system"`

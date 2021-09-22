@@ -11,7 +11,7 @@ import (
 func versionHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, types.ServerVersionInfo{
 		Version:         version.Version,
-		BuildDate:       version.BuildTime,
+		BuildTime:       version.BuildTime,
 		BuildHost:       version.BuildHost,
 		GitHash:         version.BuildHash,
 		Architecture:    version.Arch,

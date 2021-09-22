@@ -167,7 +167,7 @@ var serverRunCmd = &cobra.Command{
 }
 
 var serverVersionCmd = &cobra.Command{
-	Use:   "version",
+	Use:   "server-version",
 	Short: "Returns the version of the server",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -200,5 +200,4 @@ var serverVersionCmd = &cobra.Command{
 
 func initServerCmd() {
 	serverCmd.AddCommand(serverRunCmd)
-	serverCmd.AddCommand(serverVersionCmd)
 }
