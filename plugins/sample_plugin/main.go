@@ -55,7 +55,7 @@ func run(log *zap.Logger) {
 		select {
 		case <-tck.C:
 			// Do something here
-			update(log)
+			err = update(log)
 			if err != nil {
 				log.Error("could not update data", zap.Error(err))
 			}
