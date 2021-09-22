@@ -4,14 +4,11 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
-	"path"
 	"time"
 
 	"github.com/thomas-maurice/gowerline/gowerline-server/plugins"
 	"github.com/thomas-maurice/gowerline/gowerline-server/types"
 	"go.uber.org/zap"
-	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -73,15 +70,11 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 	stopChannel = make(chan bool)
 	stoppedChannel = make(chan bool)
 
-	configBytes, err := ioutil.ReadFile(path.Join(pluginConfig.GowerlineDir, "your_plugin.yaml"))
+	err := pluginConfig.Config.Decode(&cfg)
 	if err != nil {
 		log.Panic("could not load configuration", zap.Error(err))
 	}
 
-	err = yaml.Unmarshal(configBytes, &cfg)
-	if err != nil {
-		log.Panic("could not load configuration", zap.Error(err))
-	}
 	go run(log)
 
 	// We return the metadata here instead of the `Init` function. This is because

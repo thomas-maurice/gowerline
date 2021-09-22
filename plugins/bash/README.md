@@ -4,7 +4,8 @@ This plugin allows you to run bash commands on a schedule and store the result
 
 ## How to configure the plugin
 
-Configure it in in `~/.gowerline/bash.yaml` like so:
+You need to add the following config structure in the `plugin[].config` field of the `~/.gowerline/gowerline.yaml` file
+
 ```yaml
 ---
 commands:

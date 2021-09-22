@@ -4,7 +4,7 @@ A general description of what your thing does goes there
 
 ## How to configure the plugin
 
-Configure it in in `~/.gowerline/YOUR_PLUGIN_NAME.yaml` like so:
+Configure it in in `~/.gowerline/gowerline.yaml` in the `plugin[].config` field like so:
 ```yaml
 # some yaml file
 ```

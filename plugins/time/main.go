@@ -22,6 +22,17 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 	log.Info(
 		"started plugin",
 	)
+
+	/*
+		// If it even has a config
+		if pluginConfig.Config != nil {
+			err := pluginConfig.Config.Decode(&cfg)
+			if err != nil {
+				log.Panic("could not load configuration", zap.Error(err))
+			}
+		}
+	*/
+
 	return &types.PluginStartData{
 		Metadata: types.PluginMetadata{
 			Description: "Shows time, it is a debug segment",

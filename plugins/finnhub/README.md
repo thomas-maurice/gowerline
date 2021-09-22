@@ -6,7 +6,7 @@ you can have as many tickers as you like as long as it does not get rate
 limited by Finnhub.io.
 
 ## How to configure the plugin
-You need to create a `~/.gowerline/finnub.yaml` file like so
+You need to add the following config structure in the `plugin[].config` field of the `~/.gowerline/gowerline.yaml` file
 
 ```yaml
 token: <finnhub token>

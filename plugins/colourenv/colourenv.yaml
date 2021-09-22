@@ -1,4 +1,6 @@
 ---
+# exemple config to set up in plugin[].config section
+# of the ~/.gowerline/gowerline.yaml file
 variables:
   ENV:
     - regex: stag

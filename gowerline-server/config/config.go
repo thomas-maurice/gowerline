@@ -6,13 +6,19 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type ConfigPlugin struct {
+	Name     string    `yaml:"name"`
+	Disabled bool      `yaml:"disabled"`
+	Config   yaml.Node `yaml:"config"`
+}
+
 type Config struct {
 	Listen struct {
 		Port int64  `yaml:"port"`
 		Unix string `yaml:"unix"`
 	} `yaml:"listen"`
-	Plugins []string `yaml:"plugins"`
-	Debug   bool     `yaml:"debug"`
+	Debug   bool           `yaml:"debug"`
+	Plugins []ConfigPlugin `yaml:"plugins"`
 }
 
 func NewConfigFromFile(configFile string) (*Config, error) {

@@ -65,15 +65,49 @@ be passed down to the Go code, as long as every other variable you add in this J
 
 The Gowerline config itself lives in `~/.gowerline/server.yaml`
 ```yaml
----
+debug: false
 listen:
-    # port: 6666
-    unix: ~/.gowerline/server.sock
+  # use port to listen over HTTP, this is
+  # not the recommended, use the socket instead
+  # port: 6666
+  unix: ~/.gowerline/server.sock
 plugins:
-- time
-- finnhub
-- vault
-- colourenv
+  - name: time
+    config:
+    # no config needed
+  - name: finnhub
+    # toggle to true to actually load the plugin
+    disabled: true
+    config:
+      token: YOUR_FINHUB_TOKEN
+      tickers:
+        - CFLT
+        - AAPL
+        - FB
+  - name: vault
+    config:
+    # no config needed
+  - name: colourenv
+    config:
+      variables:
+        ENV:
+          - regex: stag
+            highlightGroup: "information:priority"
+          - regex: devel
+            highlightGroup: "information:regular"
+          - regex: prod
+            highlightGroup: "warning:regular"
+  - name: bash
+    config:
+      commands:
+        date:
+          cmd: "date"
+          interval: 30
+          highlightGroup: "information:regular"
+        kubeContext:
+          cmd: "kubectl config get-contexts --no-headers | grep '*' | awk '{ print $3 }'"
+          interval: 5
+          highlightGroup: "gwl:kube_context"
 ```
 
 ## The command line

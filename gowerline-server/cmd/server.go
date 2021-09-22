@@ -65,26 +65,32 @@ var serverRunCmd = &cobra.Command{
 
 		pluginMap := make(map[string]*plugins.Plugin)
 		pluginList := make([]*plugins.Plugin, 0)
-		for _, plgName := range cfg.Plugins {
-			plgPath := path.Join(pluginsDir, plgName)
+		for _, plgCfg := range cfg.Plugins {
+			if plgCfg.Disabled {
+				log.Info("skipping disabled pluigin", zap.String("plugin", plgCfg.Name))
+				continue
+			}
+
+			plgPath := path.Join(pluginsDir, plgCfg.Name)
 			plg, err := plugins.NewPlugin(ctx, log, plgPath, &plugins.PluginConfig{
 				UserHome:     homeDir,
 				GowerlineDir: path.Join(homeDir, ".gowerline"),
-				PluginName:   plgName,
+				PluginName:   plgCfg.Name,
+				Config:       plgCfg.Config,
 			})
 			if err != nil {
-				log.Panic(fmt.Sprintf("could not load plugin %s", plgName), zap.Error(err))
+				log.Panic(fmt.Sprintf("could not load plugin %s", plgCfg.Name), zap.Error(err))
 			}
 			startData, err := plg.RunStart(ctx, log)
 			if err != nil {
-				log.Panic(fmt.Sprintf("could not load plugin %s", plgName), zap.Error(err))
+				log.Panic(fmt.Sprintf("could not load plugin %s", plgCfg.Name), zap.Error(err))
 			}
 
 			plg.Metadata = startData.Metadata
 
 			log.Info(
 				"loaded plugin",
-				zap.String("plugin", plgName),
+				zap.String("plugin", plgCfg.Name),
 				zap.String("version", startData.Metadata.Version),
 				zap.String("author", startData.Metadata.Author),
 			)
@@ -92,7 +98,7 @@ var serverRunCmd = &cobra.Command{
 			for _, fn := range startData.Metadata.Functions {
 				log.Info(
 					"registered new function for plugin",
-					zap.String("plugin", plgName),
+					zap.String("plugin", plgCfg.Name),
 					zap.String("function", fn.Name),
 				)
 				pluginMap[fn.Name] = plg

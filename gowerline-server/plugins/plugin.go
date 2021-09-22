@@ -6,6 +6,7 @@ import (
 
 	"github.com/thomas-maurice/gowerline/gowerline-server/types"
 	"go.uber.org/zap"
+	"gopkg.in/yaml.v3"
 )
 
 // Called when a plugin starts, returns data such as the plugin name
@@ -32,6 +33,9 @@ type PluginConfig struct {
 	UserHome     string
 	GowerlineDir string
 	PluginName   string
+	// Config is a yaml node containing the configuration that
+	// is specific to the plugin
+	Config yaml.Node
 }
 
 func NewPlugin(ctx context.Context, log *zap.Logger, filePath string, pluginConfig *PluginConfig) (*Plugin, error) {

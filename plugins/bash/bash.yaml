@@ -1,10 +1,12 @@
 ---
+# exemple config to set up in plugin[].config section
+# of the ~/.gowerline/gowerline.yaml file
 commands:
   date:
     cmd: "date"
     interval: 30
     highlightGroup: "information:regular"
-  kubeContext: 
+  kubeContext:
     cmd: "kubectl config get-contexts --no-headers | grep '*' | awk '{ print $3 }'"
     interval: 5
     highlightGroup: "information:regular"
