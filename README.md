@@ -77,8 +77,13 @@ plugins:
 ```
 
 ## The command line
-The `gowerline` binary is also a commandline tool that allows you to interract with the server. You can list plugins and get help about
-a specific plugin like so:
+The `gowerline` binary is also a commandline tool that allows you to interract with the server.
+You need to add the binary to your path like so:
+```bash
+export PATH=${PATH}:${HOME}/.gowerline/bin
+```
+
+You can list plugins and get help about a specific plugin like so:
 ```
 ./bin/gowerline-v0.0.3-15-2d4a3be-dirty-thomas_linux_amd64 plugin list
 +-----------+--------------------------------+--------------------------------+--------+
