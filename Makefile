@@ -162,7 +162,7 @@ run: install-extension install-server install-plugins
 .PHONY: install-extension
 install-extension:
 	pip3 install --editable $(shell pwd)
-	if pgrep -f powerline-daemon; then powerline-daemon --replace; fi;
+	if pgrep -f powerline-daemon >/dev/null; then powerline-daemon --replace; fi;
 
 
 .PHONY: install-server

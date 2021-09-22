@@ -25,6 +25,12 @@ echo " - Will install gowerline ${tagName}"
 echo " - Stopping gowerline if it is running"
 systemctl stop --user gowerline || true
 
+echo " - Installing the python extension"
+pip install -U gowerline > /dev/null 2>&1
+
+echo " - Restarting powerline if it is running"
+if pgrep -f powerline-daemon >/dev/null; then powerline-daemon --replace; fi;
+
 echo " - Installing gowerline binary"
 wget -O ~/.gowerline/bin/gowerline "https://github.com/thomas-maurice/gowerline/releases/download/${tagName}/gowerline-${tagName}_linux_amd64" > /dev/null 2>&1
 
