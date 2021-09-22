@@ -12,14 +12,9 @@ import (
 
 func BuildPluginStatusHandler(ctx context.Context, log *zap.Logger, pluginMap map[string]*plugins.Plugin) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		result := make([]types.PluginStatus, 0)
-		for plgName, plg := range pluginMap {
-			status := types.PluginStatus{
-				Name:        plgName,
-				Description: "",
-				Functions:   plg.Functions,
-			}
-			result = append(result, status)
+		result := make(map[string]types.PluginMetadata, 0)
+		for _, plg := range pluginMap {
+			result[plg.Name] = plg.Metadata
 		}
 		c.JSON(http.StatusOK, result)
 	}

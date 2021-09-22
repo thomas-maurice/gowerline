@@ -77,7 +77,7 @@ plugins:
 ```
 
 ## How do I extend it ?
-Go have a look at the [example plugin](https://github.com/thomas-maurice/gowerline/blob/master/_sample_plugin/README.md). It should
+Go have a look at the [example plugin](https://github.com/thomas-maurice/gowerline/blob/master/plugins/_sample_plugin/README.md). It should
 be easy to understand. Feel free to copy it in the `plugins/` directory and fill in the blanks.
 
 The `Makefile` is designed so that if you run `make plugins` your new source will be picked up and compiled to `bin/plugins/<plugin>`

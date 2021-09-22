@@ -75,14 +75,21 @@ var serverRunCmd = &cobra.Command{
 			if err != nil {
 				log.Panic(fmt.Sprintf("could not load plugin %s", plgName), zap.Error(err))
 			}
-			data, err := plg.RunStart(ctx, log)
+			startData, err := plg.RunStart(ctx, log)
 			if err != nil {
 				log.Panic(fmt.Sprintf("could not load plugin %s", plgName), zap.Error(err))
 			}
 
-			plg.Functions = data.Functions
+			plg.Metadata = startData.Metadata
 
-			for _, fn := range data.Functions {
+			log.Info(
+				"loaded plugin",
+				zap.String("plugin", plgName),
+				zap.String("version", startData.Metadata.Version),
+				zap.String("author", startData.Metadata.Author),
+			)
+
+			for _, fn := range startData.Metadata.Functions {
 				log.Info(
 					"registered new function for plugin",
 					zap.String("plugin", plgName),

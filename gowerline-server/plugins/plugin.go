@@ -23,8 +23,8 @@ type Plugin struct {
 	Stop  PluginStopFunc
 	Call  PluginCallFunc
 
-	Name      string
-	Functions []types.FunctionDescriptor
+	Name     string
+	Metadata types.PluginMetadata
 }
 
 // PluginConfig will be passed down to plugins

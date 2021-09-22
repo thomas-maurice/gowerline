@@ -33,7 +33,9 @@ type PowerlineReturn struct {
 // Contains registration data like the functions
 // that the plugin maps to
 type PluginStartData struct {
-	Functions []FunctionDescriptor `json:"functions"`
+	// Metadata about the plugin that just was
+	// loaded
+	Metadata PluginMetadata
 }
 
 type FunctionDescriptor struct {
@@ -42,10 +44,11 @@ type FunctionDescriptor struct {
 	Parameters  map[string]string `json:"parameters" yaml:"parameters"`
 }
 
-type PluginStatus struct {
-	Name        string               `json:"name" yaml:"name"`
+type PluginMetadata struct {
 	Description string               `json:"description" yaml:"description"`
 	Functions   []FunctionDescriptor `json:"functions" yaml:"functions"`
+	Author      string               `json:"author" yaml:"author"`
+	Version     string               `json:"version" yaml:"version"`
 }
 
 // ServerVersioInfo contains various infos about the server
