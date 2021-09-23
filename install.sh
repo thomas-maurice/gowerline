@@ -54,6 +54,8 @@ systemctl --user daemon-reload
 systemctl enable --user gowerline
 systemctl start --user gowerline
 
+sleep 5
+
 ~/.gowerline/bin/gowerline server-version
 ~/.gowerline/bin/gowerline plugin list
 
