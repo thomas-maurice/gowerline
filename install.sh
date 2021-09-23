@@ -45,17 +45,14 @@ cp "${TEMPDIR}/${releaseDirName}/systemd/gowerline.service" ~/.config/systemd/us
 echo " - Installing config file if not present"
 if ! [ -f ~/.gowerline/gowerline.yaml ]; then cp -v "${TEMPDIR}/${releaseDirName}/gowerline.yaml" ~/.gowerline/gowerline.yaml; fi;
 
-echo " - Refreshing systemd and restart gowerline"
-systemctl --user daemon-reload
-systemctl start --user gowerline
-systemctl enable --user gowerline
-
-echo " - Stopping gowerline if it is running"
-systemctl stop --user gowerline || true
-
 echo " - Cleaning up"
 rm -r "${TEMPDIR}"
 rm ~/.gowerline/plugins.tgz
+
+echo " - Refreshing systemd and restart gowerline"
+systemctl --user daemon-reload
+systemctl enable --user gowerline
+systemctl start --user gowerline
 
 ~/.gowerline/bin/gowerline server-version
 ~/.gowerline/bin/gowerline plugin list
