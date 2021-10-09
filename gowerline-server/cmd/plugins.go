@@ -53,7 +53,7 @@ var pluginListCmd = &cobra.Command{
 		}
 
 		table := tablewriter.NewWriter(os.Stdout)
-		table.SetHeader([]string{"Name", "Description", "Version", "Author"})
+		table.SetHeader([]string{"Name", "Description", "Author", "Version"})
 
 		for name, meta := range pluginInfo {
 			table.Append([]string{name, meta.Description, meta.Author, meta.Version})
