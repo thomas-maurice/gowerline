@@ -21,7 +21,7 @@ var (
 // define here the config of your plugin, if needed
 // please use a file like `~/.gowerline/<pluginName>.yaml`
 type Config struct {
-	SomeVariable string `json:"someVariable"`
+	SomeVariable string `yaml:"someVariable" json:"someVariable"`
 }
 
 // This is where you would get the plugin arguments passed
