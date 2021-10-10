@@ -33,6 +33,7 @@ Every plugin has a `README.md` file at the root of their directory detailing wha
 | [Finnhub](https://github.com/thomas-maurice/gowerline/blob/master/plugins/finnhub/README.md) | Displays financial infos about a stock ticker (or many!) that you are interested in |
 | [Vault](https://github.com/thomas-maurice/gowerline/blob/master/plugins/vault/README.md) | Gives you information about your current Hashicorp Vault token (display name, validity TTL & co) |
 | [Colourenv](https://github.com/thomas-maurice/gowerline/blob/master/plugins/colourenv/README.md) | Renders environment variables in your terminal with different colourschemes depending on values (useful to not wreck production by mistake) |
+| [Network](https://github.com/thomas-maurice/gowerline/blob/master/plugins/network/README.md) | Displays information about how your network connexion is doing |
 
 ## How does it work (on my system) ?
 You have two parts to it:
@@ -81,6 +82,9 @@ plugins:
   - name: time
     config:
     # no config needed
+  - name: network
+    config:
+      ipService: https://checkip.amazonaws.com/
   - name: finnhub
     # toggle to true to actually load the plugin
     disabled: true
@@ -125,24 +129,26 @@ export PATH=${PATH}:${HOME}/.gowerline/bin
 
 You can list plugins and get help about a specific plugin like so:
 ```
-./bin/gowerline-v0.0.3-15-2d4a3be-dirty-thomas_linux_amd64 plugin list
-+-----------+--------------------------------+--------------------------------+--------+
-|   NAME    |          DESCRIPTION           |            VERSION             | AUTHOR |
-+-----------+--------------------------------+--------------------------------+--------+
-| bash      | Executes bash commands on      | Thomas Maurice                 | 0.0.1  |
-|           | a schedule and returns the     | <thomas@maurice.fr>            |        |
-|           | result                         |                                |        |
-| colourenv | Displays the content of env    | Thomas Maurice                 | 0.0.1  |
-|           | vars with colours depending on | <thomas@maurice.fr>            |        |
-|           | matched regexes                |                                |        |
-| finnhub   | Returns information about the  | Thomas Maurice                 | 0.0.1  |
-|           | stock price of certain tickers | <thomas@maurice.fr>            |        |
-| time      | Shows time, it is a debug      | Thomas Maurice                 | 0.0.1  |
-|           | segment                        | <thomas@maurice.fr>            |        |
-| vault     | Gathers information about      | Thomas Maurice                 | 0.0.1  |
-|           | the current Vault token and    | <thomas@maurice.fr>            |        |
-|           | formats the result             |                                |        |
-+-----------+--------------------------------+--------------------------------+--------+
+$ gowerline plugin list
++-----------+--------------------------------+--------------------------------+---------+
+|   NAME    |          DESCRIPTION           |             AUTHOR             | VERSION |
++-----------+--------------------------------+--------------------------------+---------+
+| bash      | Executes bash commands on      | Thomas Maurice                 | 0.0.1   |
+|           | a schedule and returns the     | <thomas@maurice.fr>            |         |
+|           | result                         |                                |         |
+| colourenv | Displays the content of env    | Thomas Maurice                 | 0.0.1   |
+|           | vars with colours depending on | <thomas@maurice.fr>            |         |
+|           | matched regexes                |                                |         |
+| finnhub   | Returns information about the  | Thomas Maurice                 | 0.0.1   |
+|           | stock price of certain tickers | <thomas@maurice.fr>            |         |
+| network   | Gather information about your  | Thomas Maurice                 | devel   |
+|           | network connectivity           | <thomas@maurice.fr>            |         |
+| time      | Shows time, it is a debug      | Thomas Maurice                 | 0.0.1   |
+|           | segment                        | <thomas@maurice.fr>            |         |
+| vault     | Gathers information about      | Thomas Maurice                 | 0.0.1   |
+|           | the current Vault token and    | <thomas@maurice.fr>            |         |
+|           | formats the result             |                                |         |
++-----------+--------------------------------+--------------------------------+---------+
 ```
 
 You can also get help about a specific plugin, it will tell you what functions ship with a plugin and the arguments to include in your powerline json config:
