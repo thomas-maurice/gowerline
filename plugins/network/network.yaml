@@ -1,0 +1,7 @@
+---
+# ipService needs to just return your ip address with nothing
+# else. Otherwise, it would fail.
+# Known to work are:
+#  * https://checkip.amazonaws.com/
+#  * https://ifconfig.me/ip
+ipService: https://checkip.amazonaws.com/
