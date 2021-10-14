@@ -7,12 +7,12 @@ set -euo pipefail
 TEMPDIR=$(mktemp -d)
 
 echo " - Creating directories"
-for directory in ~/.gowerline ~/.gowerline/bin ~/.gowerline/plugins ~/.config/systemd/user; do 
+for directory in ~/.gowerline ~/.gowerline/bin ~/.gowerline/plugins ~/.config/systemd/user; do
     mkdir -p "${directory}"
 done;
 
 echo " - Retrieving latest release number"
-release=$(curl -s https://api.github.com/repos/thomas-maurice/gowerline/releases|jq .[].id | sort -n | tail -n1)
+release=$(curl -s https://api.github.com/repos/thomas-maurice/gowerline/releases|jq -r '.[] | "\(.created_at) \(.id)"' | sort | cut -d\  -f 2 | tail -n1)
 releaseInfo=$(curl -s https://api.github.com/repos/thomas-maurice/gowerline/releases/${release} | jq -c .)
 tagName=$(echo "${releaseInfo}"| jq -r .name)
 
