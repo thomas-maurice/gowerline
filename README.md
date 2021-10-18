@@ -16,6 +16,11 @@ You can grab the latest version of gowerline by running the following (needs cur
 ```
 curl -sSfL https://raw.githubusercontent.com/thomas-maurice/gowerline/master/install.sh | bash
 ```
+
+Then install the latest version of the python extension by running
+```
+pip install -U gowerline
+```
 ## How does it work ?
 This is a pluggable segment generating system. Essentially a very simple powerline "segment" in the sense
 of the python class, will call a Go server that will be in charge of generating the actual segments. It allows you
