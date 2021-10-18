@@ -5,8 +5,10 @@ import (
 	"context"
 	"encoding/json"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/thomas-maurice/gowerline/gowerline-server/plugins"
@@ -19,11 +21,13 @@ const (
 )
 
 var (
-	cfg             Config
-	stopChannel     chan bool
-	stoppedChannel  chan bool
-	pluginConfig    *plugins.PluginConfig
-	publicIpAddress string
+	cfg                      Config
+	stopChannel              chan bool
+	stoppedChannel           chan bool
+	pluginConfig             *plugins.PluginConfig
+	publicIpAddress          string
+	interfacesAddresses      map[string]string
+	interfacesAddressesMutex *sync.Mutex
 )
 
 type Config struct {
@@ -31,10 +35,47 @@ type Config struct {
 }
 
 type pluginArgs struct {
+	Interface string `json:"interface"` // name of the interface to which get the address
+}
+
+func updateIPAddresses(log *zap.Logger) error {
+	ifaces, err := net.Interfaces()
+
+	newInterfacesAddress := make(map[string]string)
+
+	if err != nil {
+		log.Error("could not list interfaces", zap.Error(err))
+		return err
+	}
+
+	for _, iface := range ifaces {
+		addrs, err := iface.Addrs()
+		if err != nil {
+			log.Error("could not get addresses for interface", zap.String("interface", iface.Name))
+			return err
+		}
+
+		if len(addrs) > 0 {
+			// we only consider the first one
+			newInterfacesAddress[iface.Name] = addrs[0].String()
+		}
+	}
+
+	interfacesAddressesMutex.Lock()
+	defer interfacesAddressesMutex.Unlock()
+
+	interfacesAddresses = newInterfacesAddress
+
+	return nil
 }
 
 func update(log *zap.Logger) error {
 	log.Info("running the update loop")
+
+	err := updateIPAddresses(log)
+	if err != nil {
+		log.Error("could not update the status of ip addresses", zap.Error(err))
+	}
 
 	if cfg.IpService == "" {
 		cfg.IpService = defaultPublicIpService
@@ -81,6 +122,8 @@ func run(log *zap.Logger) {
 func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error) {
 	stopChannel = make(chan bool)
 	stoppedChannel = make(chan bool)
+	interfacesAddresses = make(map[string]string)
+	interfacesAddressesMutex = &sync.Mutex{}
 
 	err := pluginConfig.Config.Decode(&cfg)
 	if err != nil {
@@ -99,6 +142,13 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 					Name:        "public_ip",
 					Description: "Returns your public IP address",
 					Parameters:  map[string]string{},
+				},
+				{
+					Name:        "interface_ip",
+					Description: "Returns the IP of an interface",
+					Parameters: map[string]string{
+						"interface": "The interface in question",
+					},
 				},
 			},
 		},
@@ -131,6 +181,17 @@ func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*type
 				Content: publicIpAddress,
 				HighlightGroup: []string{
 					"gwl:public_ip",
+				},
+			},
+		}, nil
+	case "interface_ip":
+		interfacesAddressesMutex.Lock()
+		defer interfacesAddressesMutex.Unlock()
+		return []*types.PowerlineReturn{
+			{
+				Content: interfacesAddresses[args.Interface],
+				HighlightGroup: []string{
+					"gwl:interface_ip",
 				},
 			},
 		}, nil

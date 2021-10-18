@@ -30,12 +30,25 @@ This is how you display your public IP
 }
 ```
 
+This is how you get the address of an interface
+```json
+{
+    "function": "gowerline.gowerline.gwl",
+    "priority": 60,
+    "args": {
+        "function": "interface_ip",
+        "interface": "eth0"
+    }
+}
+```
+
 ## Highlight groups used
 Every highlight group should default to `information:regular` when no other is available.
 
 | Highlight group | Description |
 | --- | --- |
 | `gwl:public_ip` | Your public IP address |
+| `gwl:interface_ip` | The ip of a given interface |
 
 ## Miscellaneous
 None yet
