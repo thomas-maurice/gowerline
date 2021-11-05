@@ -157,3 +157,6 @@ func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*pl
 		// by whatever the `Start` function returns.
 	}, nil
 }
+
+// noop main function
+func main() {}
