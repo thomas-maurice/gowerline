@@ -54,7 +54,6 @@ func init() {
 	initPluginCommand()
 
 	rootCmd.AddCommand(serverCmd)
-	rootCmd.AddCommand(serverVersionCmd)
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(pluginCmd)
 }
