@@ -110,8 +110,8 @@ var pluginFunctionsCmd = &cobra.Command{
 	},
 }
 
-var pluginFunctionRunCmd = &cobra.Command{
-	Use:   "function-run [function]",
+var pluginRunFunction = &cobra.Command{
+	Use:   "run-function [function]",
 	Short: "Runs a function with the given parameters",
 	Args:  cobra.ExactArgs(1),
 	Long:  ``,
@@ -198,9 +198,9 @@ var pluginFunctionRunCmd = &cobra.Command{
 }
 
 func initPluginCommand() {
-	pluginFunctionRunCmd.PersistentFlags().StringSliceVarP(&runArgs, "arg", "a", []string{}, "Arguments to pass in a key=value format")
+	pluginRunFunction.PersistentFlags().StringSliceVarP(&runArgs, "arg", "a", []string{}, "Arguments to pass in a key=value format")
 
 	pluginCmd.AddCommand(pluginListCmd)
 	pluginCmd.AddCommand(pluginFunctionsCmd)
-	pluginCmd.AddCommand(pluginFunctionRunCmd)
+	pluginCmd.AddCommand(pluginRunFunction)
 }
