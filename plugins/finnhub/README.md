@@ -23,10 +23,13 @@ Then you can add a config like
     "priority": 60,
     "args": {
         "function": "ticker",
-        "ticker": "CFLT"
+        "ticker": "CFLT",
+        "includeDirection": true
     }
 }
 ```
+
+The `includeDirection` parameter adds an up arrow emoji and down arrow emoji to the rendered segment depending on the movement of the stock.
 
 ## Highlight groups used
 Every highlight group will default to `information:regular` when no other is available.

@@ -22,13 +22,20 @@ var (
 	pluginConfig   *plugins.PluginConfig
 )
 
+const (
+	DirectionUp     = "⬆️ "
+	DirectionDown   = "⬇️ "
+	DirectionStable = "-"
+)
+
 type Config struct {
 	Token   string   `yaml:"token"`
 	Tickers []string `yaml:"tickers"`
 }
 
 type pluginArgs struct {
-	Ticker string `json:"ticker"`
+	Ticker           string `json:"ticker"`
+	IncludeDirection bool   `json:"includeDirection"`
 }
 
 // updatesTickers gets the data for caching
@@ -138,16 +145,24 @@ func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*type
 		return nil, nil
 	}
 
+	content := fmt.Sprintf("%s: $%.02f", args.Ticker, quote.C)
+
 	hlGroup := "gwl:ticker_generic"
 	if quote.C > quote.Pc {
 		hlGroup = "gwl:ticker_up"
+		if args.IncludeDirection {
+			content = fmt.Sprintf("%s %s", DirectionUp, content)
+		}
 	} else if quote.C < quote.Pc {
 		hlGroup = "gwl:ticker_down"
+		if args.IncludeDirection {
+			content = fmt.Sprintf("%s %s", DirectionDown, content)
+		}
 	}
 
 	return []*types.PowerlineReturn{
 		{
-			Content: fmt.Sprintf("%s: $%.02f", args.Ticker, quote.C),
+			Content: content,
 			HighlightGroup: []string{
 				hlGroup,
 				"information:regular",
