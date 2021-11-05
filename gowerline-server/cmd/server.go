@@ -19,6 +19,7 @@ import (
 	"github.com/thomas-maurice/gowerline/gowerline-server/handlers"
 	"github.com/thomas-maurice/gowerline/gowerline-server/plugins"
 	"github.com/thomas-maurice/gowerline/gowerline-server/version"
+	bolt "go.etcd.io/bbolt"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -67,12 +68,28 @@ var serverRunCmd = &cobra.Command{
 				continue
 			}
 
+			storageDir := path.Join(homeDir, ".gowerline", "storage")
+			if _, err := os.Stat(storageDir); os.IsNotExist(err) {
+				err = os.Mkdir(storageDir, 0744)
+				if err != nil {
+					log.Fatal("could not create the storage directrory", zap.Error(err))
+				}
+			}
+
+			plgDB, err := bolt.Open(path.Join(storageDir, fmt.Sprintf("%s.db", plgCfg.Name)), 0660, nil)
+			if err != nil {
+				log.Fatal("could not create plugin database for plugin", zap.Error(err), zap.String("plugin", plgCfg.Name))
+			}
+			defer plgDB.Close()
+
 			plgPath := path.Join(pluginsDir, plgCfg.Name)
 			plg, err := plugins.NewPlugin(ctx, log, plgPath, &plugins.PluginConfig{
 				UserHome:     homeDir,
 				GowerlineDir: path.Join(homeDir, ".gowerline"),
+				StorageDir:   storageDir,
 				PluginName:   plgCfg.Name,
 				Config:       plgCfg.Config,
+				BoltDB:       plgDB,
 			})
 			if err != nil {
 				log.Panic(fmt.Sprintf("could not load plugin %s", plgCfg.Name), zap.Error(err))

@@ -5,6 +5,7 @@ import (
 	"plugin"
 
 	"github.com/thomas-maurice/gowerline/gowerline-server/types"
+	bolt "go.etcd.io/bbolt"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 )
@@ -33,6 +34,13 @@ type PluginConfig struct {
 	UserHome     string
 	GowerlineDir string
 	PluginName   string
+	// BoltDB is used as a K/V cache for data for plugins that
+	// would need them. Careful though as it is not thread safe.
+	BoltDB *bolt.DB
+	// StorageDir is the directory that would hold plugin specific data
+	// such as caches and what not. It will also hold the bolt databases
+	// that comes with all plugins by default.
+	StorageDir string
 	// Config is a yaml node containing the configuration that
 	// is specific to the plugin
 	Config yaml.Node

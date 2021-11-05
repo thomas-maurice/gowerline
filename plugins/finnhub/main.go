@@ -5,11 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/Finnhub-Stock-API/finnhub-go"
 	"github.com/thomas-maurice/gowerline/gowerline-server/plugins"
 	"github.com/thomas-maurice/gowerline/gowerline-server/types"
+	bolt "go.etcd.io/bbolt"
 	"go.uber.org/zap"
 )
 
@@ -20,13 +22,20 @@ var (
 	stopChannel    chan bool
 	stoppedChannel chan bool
 	pluginConfig   *plugins.PluginConfig
+	cacheMutex     *sync.Mutex
 )
 
 const (
 	DirectionUp     = "⬆️ "
 	DirectionDown   = "⬇️ "
 	DirectionStable = "-"
+	cacheBucketName = "tickers"
 )
+
+type cachedTickerData struct {
+	Timestamp time.Time      `json:"timestamp"`
+	Quote     *finnhub.Quote `json:"quote"`
+}
 
 type Config struct {
 	Token   string   `yaml:"token"`
@@ -50,10 +59,23 @@ func updateTickers(log *zap.Logger) error {
 		quote, _, err := client.Quote(ctx, ticker)
 		if err != nil {
 			log.Error("failed to fetch quote for ticker", zap.Error(err), zap.String("ticker", ticker))
+			cached, err := getTickerResultFromCache(ticker)
+			if err != nil {
+				log.Error("failed to fetch cached quote for ticker", zap.Error(err), zap.String("ticker", ticker))
+				continue
+			}
+			log.Info("fetched data from cache", zap.String("ticker", ticker))
+			if cached != nil {
+				cachedData[ticker] = *cached
+			}
 			continue
 		}
 
 		cachedData[ticker] = quote
+		err = cacheTickerResult(ticker, &quote)
+		if err != nil {
+			log.Error("could not cache result for ticker", zap.String("ticker", ticker), zap.Error(err))
+		}
 	}
 
 	return nil
@@ -171,6 +193,87 @@ func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*type
 	}, nil
 }
 
+func initCacheDB(db *bolt.DB) error {
+	tx, err := db.Begin(true)
+	if err != nil {
+		return nil
+	}
+	defer tx.Rollback()
+
+	_, err = tx.CreateBucketIfNotExists([]byte(cacheBucketName))
+	if err != nil {
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func cacheTickerResult(ticker string, quote *finnhub.Quote) error {
+	cacheMutex.Lock()
+	defer cacheMutex.Unlock()
+
+	tx, err := pluginConfig.BoltDB.Begin(true)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	bucket, err := tx.CreateBucketIfNotExists([]byte(cacheBucketName))
+	if err != nil {
+		return err
+	}
+
+	dataToCache := cachedTickerData{
+		Quote:     quote,
+		Timestamp: time.Now(),
+	}
+
+	b, err := json.Marshal(dataToCache)
+	if err != nil {
+		return nil
+	}
+	err = bucket.Put([]byte(ticker), b)
+	if err != nil {
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func getTickerResultFromCache(ticker string) (*finnhub.Quote, error) {
+	cacheMutex.Lock()
+	defer cacheMutex.Unlock()
+
+	tx, err := pluginConfig.BoltDB.Begin(false)
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	bucket := tx.Bucket([]byte(cacheBucketName))
+	b := bucket.Get([]byte(ticker))
+	if b == nil {
+		return nil, nil
+	}
+
+	var cached cachedTickerData
+
+	err = json.Unmarshal(b, &cached)
+	if err != nil {
+		return nil, err
+	}
+
+	return cached.Quote, nil
+}
+
 // Init builds and returns the plugin itself
 func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*plugins.Plugin, error) { //nolint:deadcode
 	log.Info(
@@ -178,11 +281,14 @@ func Init(ctx context.Context, log *zap.Logger, pCfg *plugins.PluginConfig) (*pl
 	)
 
 	pluginConfig = pCfg
+	cacheMutex = &sync.Mutex{}
+
+	err := initCacheDB(pCfg.BoltDB)
 
 	return &plugins.Plugin{
 		Start: Start,
 		Stop:  Stop,
 		Call:  Call,
 		Name:  pluginName,
-	}, nil
+	}, err
 }
