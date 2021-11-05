@@ -171,7 +171,7 @@ You can also get help about a specific plugin, it will tell you what functions s
 
 You can also test what is going to be returned, instead of messing with a cURL command:
 ```
-./bin/gowerline-v0.0.3-15-2d4a3be-dirty-thomas_linux_amd64 plugin function-run bash -a cmd=kubeContext -o json 
+./bin/gowerline-v0.0.3-15-2d4a3be-dirty-thomas_linux_amd64 plugin run-function bash -a cmd=kubeContext -o json 
 [
   {
     "contents": "kubernetes",
