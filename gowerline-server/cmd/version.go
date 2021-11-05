@@ -1,9 +1,15 @@
 package cmd
 
 import (
+	"encoding/json"
+	"io/ioutil"
+
 	"github.com/spf13/cobra"
+	"github.com/thomas-maurice/gowerline/gowerline-server/config"
 	"github.com/thomas-maurice/gowerline/gowerline-server/types"
+	"github.com/thomas-maurice/gowerline/gowerline-server/utils"
 	"github.com/thomas-maurice/gowerline/gowerline-server/version"
+	"go.uber.org/zap"
 )
 
 var versionCmd = &cobra.Command{
@@ -11,13 +17,42 @@ var versionCmd = &cobra.Command{
 	Short: "Returns the version of the binary",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		output(types.ServerVersionInfo{
+		data := make(map[string]interface{})
+
+		cfg, err := config.NewConfigFromFile(configFile)
+		if err != nil {
+			log.Panic("could not load config", zap.Error(err))
+		}
+
+		client := utils.NewHTTPClientFromConfig(cfg)
+
+		resp, err := client.Get(utils.BaseURLFromConfig(cfg) + "/version")
+		if err != nil {
+			log.Fatal("could not fetch the server's version", zap.Error(err))
+		}
+		b, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal("could not read http response", zap.Error(err))
+		}
+		defer resp.Body.Close()
+
+		var serverInfo types.ServerVersionInfo
+		err = json.Unmarshal(b, &serverInfo)
+		if err != nil {
+			log.Fatal("could not unmarshal server response", zap.Error(err))
+		}
+
+		data["server_version"] = serverInfo
+
+		data["client_version"] = types.ServerVersionInfo{
 			BuildHost:       version.BuildHost,
 			BuildTime:       version.BuildTime,
 			GitHash:         version.BuildHash,
 			Version:         version.Version,
 			OperatingSystem: version.OS,
 			Architecture:    version.Arch,
-		})
+		}
+
+		output(data)
 	},
 }
