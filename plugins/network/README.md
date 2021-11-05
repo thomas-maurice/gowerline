@@ -42,6 +42,17 @@ This is how you get the address of an interface
 }
 ```
 
+This is how you get the local hostname
+```json
+{
+    "function": "gowerline.gowerline.gwl",
+    "priority": 60,
+    "args": {
+        "function": "hostname"
+    }
+}
+```
+
 ## Highlight groups used
 Every highlight group should default to `information:regular` when no other is available.
 

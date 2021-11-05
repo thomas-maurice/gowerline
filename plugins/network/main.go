@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -150,6 +151,11 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 						"interface": "The interface in question",
 					},
 				},
+				{
+					Name:        "hostname",
+					Description: "Returns the hostname of the host",
+					Parameters:  map[string]string{},
+				},
 			},
 		},
 	}, nil
@@ -195,6 +201,19 @@ func Call(ctx context.Context, log *zap.Logger, payload *types.Payload) ([]*type
 				},
 			},
 		}, nil
+	case "hostname":
+		hostname, err := os.Hostname()
+		if err != nil {
+			log.Error("could not get hostname", zap.Error(err))
+		}
+		return []*types.PowerlineReturn{
+			{
+				Content: hostname,
+				HighlightGroup: []string{
+					"gwl:hostname",
+				},
+			},
+		}, err
 	default:
 		return []*types.PowerlineReturn{
 			{
