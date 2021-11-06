@@ -28,7 +28,6 @@ var (
 const (
 	DirectionUp     = "⬆️ "
 	DirectionDown   = "⬇️ "
-	DirectionStable = "-"
 	cacheBucketName = "tickers"
 )
 
@@ -198,7 +197,7 @@ func initCacheDB(db *bolt.DB) error {
 	if err != nil {
 		return nil
 	}
-	defer tx.Rollback()
+	defer tx.Rollback() //nolint:errcheck
 
 	_, err = tx.CreateBucketIfNotExists([]byte(cacheBucketName))
 	if err != nil {
@@ -220,7 +219,7 @@ func cacheTickerResult(ticker string, quote *finnhub.Quote) error {
 	if err != nil {
 		return err
 	}
-	defer tx.Rollback()
+	defer tx.Rollback() //nolint:errcheck
 
 	bucket, err := tx.CreateBucketIfNotExists([]byte(cacheBucketName))
 	if err != nil {
@@ -256,7 +255,7 @@ func getTickerResultFromCache(ticker string) (*finnhub.Quote, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer tx.Rollback()
+	defer tx.Rollback() //nolint:errcheck
 
 	bucket := tx.Bucket([]byte(cacheBucketName))
 	b := bucket.Get([]byte(ticker))
