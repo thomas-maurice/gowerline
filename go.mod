@@ -9,6 +9,7 @@ require (
 	github.com/hashicorp/vault/api v1.3.0
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/spf13/cobra v1.2.1
+	github.com/vishvananda/netlink v1.1.0
 	go.etcd.io/bbolt v1.3.6
 	go.uber.org/zap v1.19.1
 	gopkg.in/fsnotify.v1 v1.4.7
@@ -71,6 +72,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/ugorji/go/codec v1.2.6 // indirect
+	github.com/vishvananda/netns v0.0.0-20191106174202-0a2b9b5464df // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/goleak v1.1.12 // indirect
 	go.uber.org/multierr v1.7.0 // indirect

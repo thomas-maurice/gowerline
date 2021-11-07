@@ -4,6 +4,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -14,6 +15,7 @@ import (
 
 	"github.com/thomas-maurice/gowerline/gowerline-server/plugins"
 	"github.com/thomas-maurice/gowerline/gowerline-server/types"
+	"github.com/vishvananda/netlink"
 	"go.uber.org/zap"
 )
 
@@ -39,6 +41,38 @@ type pluginArgs struct {
 	Interface string `json:"interface"` // name of the interface to which get the address
 }
 
+func getDefaultIPAddress(log *zap.Logger) (string, error) {
+	handle, err := netlink.NewHandle(netlink.FAMILY_V4)
+	if err != nil {
+		return "", err
+	}
+	routes, err := handle.RouteList(nil, netlink.FAMILY_V4)
+	if err != nil {
+		return "", err
+	}
+
+	for _, route := range routes {
+		if route.Dst == nil {
+			ifLink, err := netlink.LinkByIndex(route.LinkIndex)
+			if err != nil {
+				return "", err
+			}
+			addresses, err := netlink.AddrList(ifLink, netlink.FAMILY_V4)
+			if err != nil {
+				return "", err
+			}
+
+			if len(addresses) == 0 {
+				return "", fmt.Errorf("could not determine any address on %s", ifLink.Attrs().Name)
+			}
+
+			return addresses[0].IP.String(), nil
+		}
+	}
+
+	return "", nil
+}
+
 func updateIPAddresses(log *zap.Logger) error {
 	ifaces, err := net.Interfaces()
 
@@ -61,6 +95,12 @@ func updateIPAddresses(log *zap.Logger) error {
 			newInterfacesAddress[iface.Name] = addrs[0].String()
 		}
 	}
+
+	defaultAddress, err := getDefaultIPAddress(log)
+	if err != nil {
+		log.Error("could not determine default IP address", zap.Error(err))
+	}
+	newInterfacesAddress["default"] = defaultAddress
 
 	interfacesAddressesMutex.Lock()
 	defer interfacesAddressesMutex.Unlock()

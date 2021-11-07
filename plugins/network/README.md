@@ -42,6 +42,8 @@ This is how you get the address of an interface
 }
 ```
 
+You can use `default` for the default IP address. A best effort attempt is going to be the following to determine what it is, it will take the first ip address of the first interface that has a default route on it. It should work for most of the setups most of the time.
+
 This is how you get the local hostname
 ```json
 {
