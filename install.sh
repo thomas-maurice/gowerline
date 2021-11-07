@@ -43,7 +43,7 @@ echo " - Installing systemd unit file"
 cp "${TEMPDIR}/${releaseDirName}/systemd/gowerline.service" ~/.config/systemd/user/gowerline.service
 
 echo " - Installing upgrade script"
-cp "${TEMPDIR}/${releaseDirName}/upgrade-gowerline" ~/.gowerline/bin
+cp "${TEMPDIR}/${releaseDirName}/install.sh" ~/.gowerline/bin/upgrade-gowerline
 chmod +x ~/.gowerline/bin/upgrade-gowerline
 
 echo " - Installing config file if not present"
