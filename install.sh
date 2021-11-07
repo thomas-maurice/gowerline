@@ -16,7 +16,7 @@ release=$(curl -s https://api.github.com/repos/thomas-maurice/gowerline/releases
 releaseInfo=$(curl -s https://api.github.com/repos/thomas-maurice/gowerline/releases/${release} | jq -c .)
 tagName=$(echo "${releaseInfo}"| jq -r .name)
 
-echo " - Downloading the last release tarball"
+echo " - Downloading the last release tarball ${tagName}"
 wget -O "${TEMPDIR}/release.tgz" https://api.github.com/repos/thomas-maurice/gowerline/tarball/${tagName} > /dev/null 2>&1
 (cd "${TEMPDIR}" ; tar zxf release.tgz)
 releaseDirName=$(ls "${TEMPDIR}" | grep thomas-maurice)
