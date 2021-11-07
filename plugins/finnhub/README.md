@@ -10,6 +10,8 @@ You need to add the following config structure in the `plugin[].config` field of
 
 ```yaml
 token: <finnhub token>
+# refresh data every interval
+refresh: 2m
 tickers:
 - AAPL
 - FB

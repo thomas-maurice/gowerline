@@ -37,8 +37,9 @@ type cachedTickerData struct {
 }
 
 type Config struct {
-	Token   string   `yaml:"token"`
-	Tickers []string `yaml:"tickers"`
+	Token   string        `yaml:"token"`
+	Tickers []string      `yaml:"tickers"`
+	Refresh time.Duration `yaml:"refresh"`
 }
 
 type pluginArgs struct {
@@ -90,7 +91,7 @@ func run(log *zap.Logger) {
 		log.Error("failed to update tickers", zap.Error(err))
 	}
 
-	tck := time.NewTicker(time.Minute)
+	tck := time.NewTicker(cfg.Refresh)
 
 	for {
 		select {
@@ -122,6 +123,12 @@ func Start(ctx context.Context, log *zap.Logger) (*types.PluginStartData, error)
 	for _, ticker := range cfg.Tickers {
 		log.Info("added ticker", zap.String("ticker", ticker))
 	}
+
+	if cfg.Refresh < time.Second*60 {
+		cfg.Refresh = time.Second * 60
+	}
+
+	log.Info(fmt.Sprintf("refreshing data every %v", cfg.Refresh))
 
 	go run(log)
 
