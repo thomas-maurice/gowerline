@@ -42,6 +42,10 @@ wget -O ~/.gowerline/plugins.tgz "https://github.com/thomas-maurice/gowerline/re
 echo " - Installing systemd unit file"
 cp "${TEMPDIR}/${releaseDirName}/systemd/gowerline.service" ~/.config/systemd/user/gowerline.service
 
+echo " - Installing upgrade script"
+cp "${TEMPDIR}/${releaseDirName}/upgrade-gowerline" ~/.gowerline/bin
+chmod +x ~/.gowerline/bin/upgrade-gowerline
+
 echo " - Installing config file if not present"
 if ! [ -f ~/.gowerline/gowerline.yaml ]; then cp -v "${TEMPDIR}/${releaseDirName}/gowerline.yaml" ~/.gowerline/gowerline.yaml; fi;
 
@@ -56,7 +60,7 @@ systemctl start --user gowerline
 
 sleep 5
 
-~/.gowerline/bin/gowerline server-version
+~/.gowerline/bin/gowerline version
 ~/.gowerline/bin/gowerline plugin list
 
 cat <<EOF

@@ -1,4 +1,4 @@
-all: bin server plugins archive
+all: bin server plugins archive upgrade_script
 
 # This part of the makefile is adapted from https://gist.github.com/grihabor/4a750b9d82c9aa55d5276bd5503829be
 DESCRIBE           := $(shell git tag | sort -V -r | head -n 1)
@@ -114,6 +114,16 @@ push_tags:
 
 autobump: bump-version push_tags
 
+.PHONY: upgrade_script
+upgrade_script: bin
+	cp -v install.sh bin/upgrade-gowerline
+	chmod +x bin/upgrade-gowerline
+
+.PHONY: install-upgrade-script
+install-upgrade-script: upgrade_script
+	cp -v bin/upgrade-gowerline ~/.gowerline/bin
+	chmod +x ~/.gowerline/bin/upgrade-gowerline
+
 .PHONY: upload-pypi
 upload-pypi:
 	if [ -d dist ]; then rm -fr dist; fi
@@ -186,7 +196,7 @@ copy-config:
 	if ! [ -f ~/.gowerline/gowerline.yaml ]; then cp -v gowerline.yaml ~/.gowerline; fi;
 
 .PHONY: install
-install: install-extension install-server install-plugins copy-config restart
+install: install-extension install-server install-plugins copy-config install-upgrade-script restart
 
 .PHONY: install-full
 install-full: install-systemd install
