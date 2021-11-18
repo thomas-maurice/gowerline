@@ -51,6 +51,8 @@ func getDefaultIPAddress(log *zap.Logger) (string, error) {
 		return "", err
 	}
 
+	defer handle.Close()
+
 	for _, route := range routes {
 		if route.Dst == nil {
 			ifLink, err := netlink.LinkByIndex(route.LinkIndex)
