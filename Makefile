@@ -158,17 +158,17 @@ restart:
 
 .PHONY: server
 server: bin
-	$(GOENV) go build -o bin/gowerline-$(BINARY_SUFFIX) $(GOFLAGS) ./gowerline-server
+	( cd gowerline-server ; $(GOENV) go build -o ../bin/gowerline-$(BINARY_SUFFIX) $(GOFLAGS) . )
 
 .PHONY: plugins
 plugins:
 	for plg in $(shell ls plugins); do \
-		$(GOENV) go build -o bin/plugins/$${plg} -buildmode=plugin $(GOFLAGS) ./plugins/$${plg}; \
+		( cd ./plugins/$${plg} ; $(GOENV) go build -o ../../bin/plugins/$${plg} -buildmode=plugin $(GOFLAGS) . ) \
 	done;
 
 .PHONY: run
 run: install-extension install-server install-plugins
-	~/.gowerline/bin/gowerline
+	~/.gowerline/bin/gowerline server run
 
 .PHONY: install-extension
 install-extension:
