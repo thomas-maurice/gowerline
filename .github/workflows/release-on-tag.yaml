@@ -18,6 +18,8 @@ jobs:
           go-version: "1.18"
       - name: Build
         run: |
+          make test
+          make lint
           make
           rm -rf bin/plugins
       - name: Release

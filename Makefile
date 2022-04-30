@@ -1,5 +1,7 @@
 all: bin server plugins archive upgrade_script
 
+GOLANGCI_LINT_VERSION = v1.45.2
+
 # This part of the makefile is adapted from https://gist.github.com/grihabor/4a750b9d82c9aa55d5276bd5503829be
 DESCRIBE           := $(shell git tag | sort -V -r | head -n 1)
 
@@ -107,6 +109,19 @@ bump-version:
 	git commit -m "bump version $(VERSION) -> $(BUMPED_VERSION)"
 	git tag $(BUMPED_VERSION) -m "bump version $(VERSION) -> $(BUMPED_VERSION)"
 	@echo "Don't forget to git push --tags, run make push_tags"
+
+test:
+	( cd gowerline-server; go test ./... -race -cover )
+	for plg in $(shell ls plugins); do \
+		( cd ./plugins/$${plg} ; $(GOENV) go test ./... -race -cover ) \
+	done;
+
+lint:
+	if ! which golangci-lint 2>/dev/null; then curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin $(GOLANGCI_LINT_VERSION); fi;
+	( cd gowerline-server; golangci-lint run )
+	for plg in $(shell ls plugins); do \
+		( cd ./plugins/$${plg} ; golangci-lint run ) \
+	done;
 
 push_tags:
 	git push
