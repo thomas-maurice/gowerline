@@ -103,6 +103,7 @@ clean:
 
 .PHONY: bump-version
 bump-version:
+	git pull --tags
 	if [ git branch | grep \* | cut -f 2 -d \ != "master" ]; then echo "This must be ran from master"; exit 1; fi;
 	echo "$(BUMPED_VERSION)" > VERSION
 	git add VERSION
