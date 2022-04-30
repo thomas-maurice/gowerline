@@ -117,7 +117,7 @@ test:
 	done;
 
 lint:
-	if ! which golangci-lint 2>/dev/null; then curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin $(GOLANGCI_LINT_VERSION); fi;
+	if ! which golangci-lint 2>/dev/null; then curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin $(GOLANGCI_LINT_VERSION); fi;
 	( cd gowerline-server; golangci-lint run )
 	for plg in $(shell ls plugins); do \
 		( cd ./plugins/$${plg} ; golangci-lint run ) \
