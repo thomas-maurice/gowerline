@@ -25,7 +25,7 @@ NEXT_MAJOR         := $(shell echo $$(($(MAJOR)+1)))
 NEXT_MINOR         := $(shell echo $$(($(MINOR)+1)))
 NEXT_MICRO         := $(shell echo $$(($(MICRO)+1)))
 
-_dirty_files       := $(shell git status --untracked-files=no --porcelain | wc -l)
+_dirty_files       := $(shell git status --untracked-files=no --porcelain | wc -l | tr -d \  )
 ifeq ($(_dirty_files),0)
 DIRTY := false
 else
@@ -33,7 +33,7 @@ DIRTY := true
 endif
 
 HASH               := $(shell git rev-parse --short HEAD)
-COMMITS_SINCE_TAG  := $(shell git log $(shell git describe --tags --abbrev=0)..HEAD --oneline | wc -l)
+COMMITS_SINCE_TAG  :=$(shell git log $(shell git describe --tags --abbrev=0)..HEAD --oneline | wc -l | tr -d \ )
 BUILD_USER         := $(shell whoami)
 
 
@@ -76,6 +76,7 @@ endif
 
 VERSION := v$(VERSION_NO_V)
 
+.PHONY: version
 version:
 	@echo "Version           : $(VERSION), no v: $(VERSION_NO_V)"
 	@echo "Bumped version    : $(BUMPED_VERSION), no v: $(BUMPED_VERSION_NO_V)"

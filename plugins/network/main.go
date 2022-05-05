@@ -4,7 +4,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -13,9 +12,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/jackpal/gateway"
 	"github.com/thomas-maurice/gowerline/gowerline-server/plugins"
 	"github.com/thomas-maurice/gowerline/gowerline-server/types"
-	"github.com/vishvananda/netlink"
 	"go.uber.org/zap"
 )
 
@@ -42,37 +41,12 @@ type pluginArgs struct {
 }
 
 func getDefaultIPAddress(log *zap.Logger) (string, error) {
-	handle, err := netlink.NewHandle(netlink.FAMILY_V4)
-	if err != nil {
-		return "", err
-	}
-	routes, err := handle.RouteList(nil, netlink.FAMILY_V4)
+	ip, err := gateway.DiscoverInterface()
 	if err != nil {
 		return "", err
 	}
 
-	defer handle.Close()
-
-	for _, route := range routes {
-		if route.Dst == nil {
-			ifLink, err := netlink.LinkByIndex(route.LinkIndex)
-			if err != nil {
-				return "", err
-			}
-			addresses, err := netlink.AddrList(ifLink, netlink.FAMILY_V4)
-			if err != nil {
-				return "", err
-			}
-
-			if len(addresses) == 0 {
-				return "", fmt.Errorf("could not determine any address on %s", ifLink.Attrs().Name)
-			}
-
-			return addresses[0].IP.String(), nil
-		}
-	}
-
-	return "", nil
+	return ip.String(), nil
 }
 
 func updateIPAddresses(log *zap.Logger) error {
